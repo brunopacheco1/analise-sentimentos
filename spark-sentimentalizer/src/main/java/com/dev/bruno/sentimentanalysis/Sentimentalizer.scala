@@ -33,7 +33,7 @@ object Sentimentalizer {
     val credentials = new DefaultAWSCredentialsProviderChain().getCredentials()
 
     val kinesisStreams = (0 until 1).map { i =>
-      KinesisUtils.createStream(ssc, "bab-search-engine-consumer", "bab-search-engine", "kinesis.us-east-1.amazonaws.com", "us-east-1",
+      KinesisUtils.createStream(ssc, "sentimentalizer-consumer", "sentimentalizer", "kinesis.us-east-1.amazonaws.com", "us-east-1",
         InitialPositionInStream.LATEST, Milliseconds(2000), StorageLevel.MEMORY_ONLY)
     }
 
@@ -41,7 +41,7 @@ object Sentimentalizer {
     unionStreams.foreachRDD(rdd => {
       val result = rdd.map(document => buildResult(new String(document)))
 
-      EsSpark.saveToEs(result, "documents/document", Map("es.mapping.id" -> "id"))
+      EsSpark.saveToEs(result, "twiter/tweets", Map("es.mapping.id" -> "id"))
     })
 
     ssc.start()

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	version="3.0">
+	<display-name>service-sms</display-name>
+	
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+
+	<env-entry>
+		<env-entry-name>app.context</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>${app.context}</env-entry-value>
+	</env-entry>
+	
+	<env-entry>
+		<env-entry-name>msg.broker.host</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>${msg.broker.host}</env-entry-value>
+	</env-entry>
+	
+	<env-entry>
+		<env-entry-name>msg.broker.queue</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>${msg.broker.queue}</env-entry-value>
+	</env-entry>
+</web-app>

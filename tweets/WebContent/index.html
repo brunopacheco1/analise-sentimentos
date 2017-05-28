@@ -1,85 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Análise de Sentimentos</title>
+<title>Análise de Sentimentos</title>
 
-    <meta name="description" content="Source code generated using layoutit.com">
-    <meta name="author" content="LayoutIt!">
+<meta name="description"
+	content="Source code generated using layoutit.com">
+<meta name="author" content="LayoutIt!">
 
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
-  </head>
-  <body>
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
 
-    <div class="container-fluid">
-	<div class="row">
-		<div class="col-md-12">
-			<div class="jumbotron">
-				<h2>
-					Análise de Sentimentos: Uma Visão Sobre o Governo Federal
-				</h2>
-				<p>
-					This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.
-				</p>
-			</div>
-			<div class="row">
-				<div class="col-md-8">
-					<p>
-						Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Aliquam eget sapien sapien. Curabitur in metus urna. In hac habitasse platea dictumst. Phasellus eu sem sapien, sed vestibulum velit. Nam purus nibh, lacinia non faucibus et, pharetra in dolor. Sed iaculis posuere diam ut cursus. <em>Morbi commodo sodales nisi id sodales. Proin consectetur, nisi id commodo imperdiet, metus nunc consequat lectus, id bibendum diam velit et dui.</em> Proin massa magna, vulputate nec bibendum nec, posuere nec lacus. <small>Aliquam mi erat, aliquam vel luctus eu, pharetra quis elit. Nulla euismod ultrices massa, et feugiat ipsum consequat eu.</small>
-					</p>
+
+
+	<script src="js/jquery.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/scripts.js"></script>
+
+<script type="text/javascript">
+	var tweets = new Map();
+
+	function updateSentiment(id, sentiment) {
+		var tweet = tweets.get(id);
+		tweet.humanSentiment = sentiment;
+
+		$.ajax({
+    		url: "http://104.198.31.12/tweets/api/tweet",
+			type: "POST",
+	        contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			data : JSON.stringify (tweet),
+    		success: function (data) {
+				$( "#tweet-" + tweet.id).remove();
+            }
+    	});
+	}
+
+    $( function() {
+    	$.ajax({
+		type: "GET",
+    		dataType: "json",
+    		url: "http://104.198.31.12/tweets/api/tweet",
+    		success: function (data) {
+			$("#tweets-container").html("");
+			$(data).each(function(index, child) {
+				tweets.set(child.id, child);
+				$("#tweets-container").append('<div id="tweet-' + child.id + '" class="row"><div class="col-md-8"><p>' + child.text + '</p></div><div class="col-md-4"><div class="btn-group"><button class="btn btn-default" type="button" onclick="updateSentiment(' + child.id + ',-1)"><em class="glyphicon glyphicon-minus-sign"></em>Negativo</button><button class="btn btn-default" type="button" onclick="updateSentiment(' + child.id + ',0)"><em class="glyphicon glyphicon-question-sign"></em>Neutro</button><button class="btn btn-default" type="button" onclick="updateSentiment(' + child.id + ',1)"><em class="glyphicon glyphicon-plus-sign"></em>Positivo</button></div></div></div>');
+			});
+            }
+    	});
+    });
+    </script>
+</head>
+<body>
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="jumbotron">
+					<h2>Análise de Sentimentos: Uma Visão Sobre o Governo Federal
+					</h2>
+					<p>This is a template for a simple marketing or informational
+						website. It includes a large callout called the hero unit and
+						three supporting pieces of content. Use it as a starting point to
+						create something more unique.</p>
 				</div>
-				<div class="col-md-4">
-					<div class="btn-group">
-						 
-						<button class="btn btn-default" type="button">
-							<em class="glyphicon glyphicon-align-left"></em> Left
-						</button> 
-						<button class="btn btn-default" type="button">
-							<em class="glyphicon glyphicon-align-center"></em> Center
-						</button> 
-						<button class="btn btn-default" type="button">
-							<em class="glyphicon glyphicon-align-right"></em> Right
-						</button> 
-						<button class="btn btn-default" type="button">
-							<em class="glyphicon glyphicon-align-justify"></em> Justify
-						</button>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-8">
-					<p>
-						Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Aliquam eget sapien sapien. Curabitur in metus urna. In hac habitasse platea dictumst. Phasellus eu sem sapien, sed vestibulum velit. Nam purus nibh, lacinia non faucibus et, pharetra in dolor. Sed iaculis posuere diam ut cursus. <em>Morbi commodo sodales nisi id sodales. Proin consectetur, nisi id commodo imperdiet, metus nunc consequat lectus, id bibendum diam velit et dui.</em> Proin massa magna, vulputate nec bibendum nec, posuere nec lacus. <small>Aliquam mi erat, aliquam vel luctus eu, pharetra quis elit. Nulla euismod ultrices massa, et feugiat ipsum consequat eu.</small>
-					</p>
-				</div>
-				<div class="col-md-4">
-					<div class="btn-group">
-						 
-						<button class="btn btn-default" type="button">
-							<em class="glyphicon glyphicon-align-left"></em> Left
-						</button> 
-						<button class="btn btn-default" type="button">
-							<em class="glyphicon glyphicon-align-center"></em> Center
-						</button> 
-						<button class="btn btn-default" type="button">
-							<em class="glyphicon glyphicon-align-right"></em> Right
-						</button> 
-						<button class="btn btn-default" type="button">
-							<em class="glyphicon glyphicon-align-justify"></em> Justify
-						</button>
-					</div>
+				
+				<div id="tweets-container" class="row">
 				</div>
 			</div>
 		</div>
 	</div>
-</div>
-
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/scripts.js"></script>
-  </body>
+</body>
 </html>

@@ -6,7 +6,4 @@ import javax.ws.rs.core.Application;
 
 @ApplicationPath("api")
 public class BaseApplication extends Application {
-	
-	public BaseApplication() {
-	}
 }

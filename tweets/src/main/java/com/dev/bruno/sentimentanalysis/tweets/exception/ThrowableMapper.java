@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.dev.bruno.sentimentanalysis.tweets.dto.ResponseDTO;
+import com.dev.bruno.sentimentanalysis.tweets.model.Response;
 
 @Provider
 public class ThrowableMapper implements ExceptionMapper<Throwable> {
@@ -18,7 +18,7 @@ public class ThrowableMapper implements ExceptionMapper<Throwable> {
 	
 	@Override
 	public Response toResponse(Throwable t) {
-		ResponseDTO response = new ResponseDTO("Erro não esperado.");
+		Response response = new Response("Erro não esperado.");
 		
 		logger.log(Level.SEVERE, t.getMessage(), t);
 		

@@ -1,25 +1,29 @@
-package com.dev.bruno.sentimentanalysis.tweets.dto;
+package com.dev.bruno.sentimentanalysis.tweets.model;
 
-public class ResponseDTO {
+import java.io.Serializable;
+
+public class Response implements Serializable {
+
+	private static final long serialVersionUID = -3907110847929957239L;
 
 	private Boolean success = false;
 	
 	private String message;
 
-	public ResponseDTO(Boolean success, String message) {
+	public Response(Boolean success, String message) {
 		super();
 		
 		this.success = success;
 		this.message = message;
 	}
 	
-	public ResponseDTO(Boolean success) {
+	public Response(Boolean success) {
 		super();
 		
 		this.success = success;
 	}
 	
-	public ResponseDTO(String message) {
+	public Response(String message) {
 		super();
 		
 		this.message = message;

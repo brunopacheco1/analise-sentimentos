@@ -5,20 +5,16 @@ import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
 
-public class TweetConsumer implements StatusListener {
+public class TweetStreamConsumer implements StatusListener {
 	
-	private TweetService service = (TweetService) ServiceLocator.getInstance().lookup(TweetService.class);
+	private TwitterStreamService service = (TwitterStreamService) ServiceLocator.getInstance().lookup(TwitterStreamService.class);
 
 	@Override
 	public void onStallWarning(StallWarning arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onScrubGeo(long arg0, long arg1) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void onStatus(Status status) {

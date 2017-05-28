@@ -16,14 +16,14 @@
 	</env-entry>
 	
 	<env-entry>
-		<env-entry-name>msg.broker.host</env-entry-name>
+		<env-entry-name>credentials.folder</env-entry-name>
 		<env-entry-type>java.lang.String</env-entry-type>
-		<env-entry-value>${msg.broker.host}</env-entry-value>
+		<env-entry-value>${credentials.folder}</env-entry-value>
 	</env-entry>
 	
-	<env-entry>
-		<env-entry-name>msg.broker.queue</env-entry-name>
+		<env-entry>
+		<env-entry-name>twitter.filters</env-entry-name>
 		<env-entry-type>java.lang.String</env-entry-type>
-		<env-entry-value>${msg.broker.queue}</env-entry-value>
+		<env-entry-value>${twitter.filters}</env-entry-value>
 	</env-entry>
 </web-app>

@@ -1,0 +1,6 @@
+indexes:
+- kind: tweet
+  properties:
+  - name: sentiment
+  - name: id
+    direction: asc

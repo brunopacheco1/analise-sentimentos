@@ -72,7 +72,7 @@ public class TweetService {
 		Query<Entity> query = Query.newEntityQueryBuilder()
 			    .setKind("tweet")
 			    .setFilter(com.google.cloud.datastore.StructuredQuery.PropertyFilter.isNull("sentiment"))
-			    .setOrderBy(OrderBy.desc("id")).setLimit(100)
+			    .setOrderBy(OrderBy.asc("id")).setLimit(100)
 			    .build();
 		
 		QueryResults<Entity> result = datastore.run(query);
@@ -84,7 +84,10 @@ public class TweetService {
 			Tweet tweet = new Tweet();
 			tweet.setId(entity.getLong("id"));
 			tweet.setText(entity.getString("text"));
-			tweet.setSentiment(entity.getLong("sentiment"));
+			
+			if(!entity.isNull("sentiment")) {
+				tweet.setSentiment(entity.getLong("sentiment"));
+			}
 			
 			tweets.add(tweet);
 		}

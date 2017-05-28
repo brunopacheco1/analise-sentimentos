@@ -76,7 +76,6 @@ public class TwitterStreamService {
 	}
 	
 	public void process(Status status) {
-		
 		Tweet tweet = new Tweet();
 		
 		tweet.setId(status.getId());

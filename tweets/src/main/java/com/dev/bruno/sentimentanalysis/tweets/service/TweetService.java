@@ -15,7 +15,6 @@ import com.google.cloud.datastore.DatastoreOptions;
 import com.google.cloud.datastore.Entity;
 import com.google.cloud.datastore.Key;
 import com.google.cloud.datastore.KeyFactory;
-import com.google.cloud.datastore.LatLng;
 
 @Stateless
 public class TweetService {
@@ -45,10 +44,6 @@ public class TweetService {
 		Key key = keyFactory.newKey(tweet.getId());
 		
 		Entity.Builder builder = Entity.newBuilder(key).set("id", tweet.getId()).set("text", tweet.getText()).setNull("sentiment");
-		 
-		if(tweet.getGeoLocation() != null) {
-			builder.set("geoLocation", LatLng.of(tweet.getGeoLocation().getLatitude(), tweet.getGeoLocation().getLongitude()));
-		}
 		
 		Entity entity = builder.build();
 		datastore.put(entity);

@@ -12,8 +12,6 @@ public class Tweet implements Serializable {
 	
 	private Integer sentiment;
 	
-	private GeoLocation geoLocation;
-
 	public Long getId() {
 		return id;
 	}
@@ -36,13 +34,5 @@ public class Tweet implements Serializable {
 
 	public void setSentiment(Integer sentiment) {
 		this.sentiment = sentiment;
-	}
-
-	public GeoLocation getGeoLocation() {
-		return geoLocation;
-	}
-
-	public void setGeoLocation(GeoLocation geoLocation) {
-		this.geoLocation = geoLocation;
 	}
 }

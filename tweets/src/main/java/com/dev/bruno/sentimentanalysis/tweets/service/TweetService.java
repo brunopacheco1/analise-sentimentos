@@ -56,8 +56,13 @@ public class TweetService {
 
 		Key key = keyFactory.newKey(tweet.getId());
 
-		Entity.Builder builder = Entity.newBuilder(key).set("id", tweet.getId()).set("text", tweet.getText())
-				.set("sentiment", tweet.getSentiment());
+		Entity.Builder builder = Entity.newBuilder(key).set("id", tweet.getId()).set("text", tweet.getText());
+		
+		if(tweet.getSentiment() != null) {
+			builder.set("sentiment", tweet.getSentiment());
+		} else {
+			builder.setNull("sentiment");
+		}
 
 		Entity entity = builder.build();
 		datastore.put(entity);

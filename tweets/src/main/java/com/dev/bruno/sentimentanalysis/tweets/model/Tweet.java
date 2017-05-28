@@ -10,7 +10,7 @@ public class Tweet implements Serializable {
 	
 	private String text;
 	
-	private Integer sentiment;
+	private Long sentiment;
 	
 	public Long getId() {
 		return id;
@@ -28,11 +28,11 @@ public class Tweet implements Serializable {
 		this.text = text;
 	}
 
-	public Integer getSentiment() {
+	public Long getSentiment() {
 		return sentiment;
 	}
 
-	public void setSentiment(Integer sentiment) {
+	public void setSentiment(Long sentiment) {
 		this.sentiment = sentiment;
 	}
 }

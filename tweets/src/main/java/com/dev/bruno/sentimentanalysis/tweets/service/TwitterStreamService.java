@@ -82,6 +82,6 @@ public class TwitterStreamService {
 		tweet.setId(status.getId());
 		tweet.setText(status.getText());
 		
-		service.process(tweet);
+		service.insert(tweet);
 	}
 }

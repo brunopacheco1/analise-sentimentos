@@ -45,7 +45,7 @@ public class TweetService {
 		}
 	}
 
-	public void insert(Tweet tweet) {
+	public void insert(com.dev.bruno.sentimentanalysis.tweets.model.Tweet tweet) {
 		if (tweet == null) {
 			throw new AppException("Tweet não informado.");
 		}
@@ -58,10 +58,16 @@ public class TweetService {
 
 		Entity.Builder builder = Entity.newBuilder(key).set("id", tweet.getId()).set("text", tweet.getText());
 		
-		if(tweet.getSentiment() != null) {
-			builder.set("sentiment", tweet.getSentiment());
+		if(tweet.getHumanSentiment() != null) {
+			builder.set("humanSentiment", tweet.getHumanSentiment());
 		} else {
-			builder.setNull("sentiment");
+			builder.setNull("humanSentiment");
+		}
+		
+		if(tweet.getMachineSentiment() != null) {
+			builder.set("machineSentiment", tweet.getMachineSentiment());
+		} else {
+			builder.setNull("machineSentiment");
 		}
 
 		Entity entity = builder.build();
@@ -71,7 +77,7 @@ public class TweetService {
 	public List<Tweet> list() {
 		Query<Entity> query = Query.newEntityQueryBuilder()
 			    .setKind("tweet")
-			    .setFilter(com.google.cloud.datastore.StructuredQuery.PropertyFilter.isNull("sentiment"))
+			    .setFilter(com.google.cloud.datastore.StructuredQuery.PropertyFilter.isNull("humanSentiment"))
 			    .setOrderBy(OrderBy.asc("id")).setLimit(100)
 			    .build();
 		
@@ -81,12 +87,16 @@ public class TweetService {
 		while (result.hasNext()) {
 			Entity entity = result.next();
 			
-			Tweet tweet = new Tweet();
+			com.dev.bruno.sentimentanalysis.tweets.model.Tweet tweet = new Tweet();
 			tweet.setId(entity.getLong("id"));
 			tweet.setText(entity.getString("text"));
 			
-			if(!entity.isNull("sentiment")) {
-				tweet.setSentiment(entity.getLong("sentiment"));
+			if(!entity.isNull("humanSentiment")) {
+				tweet.setHumanSentiment(entity.getLong("humanSentiment"));
+			}
+			
+			if(!entity.isNull("machineSentiment")) {
+				tweet.setMachineSentiment(entity.getLong("machineSentiment"));
 			}
 			
 			tweets.add(tweet);

@@ -53,7 +53,7 @@ public class TweetService {
 		if (tweet.getId() == null || tweet.getText() == null) {
 			throw new AppException("id e text são campos obrigatórios.");
 		}
-
+		
 		Key key = keyFactory.newKey(tweet.getId());
 
 		Entity.Builder builder = Entity.newBuilder(key).set("id", tweet.getId()).set("text", tweet.getText());
@@ -74,10 +74,20 @@ public class TweetService {
 		datastore.put(entity);
 	}
 
+	public Tweet get(Long id) {
+		Key key = keyFactory.newKey(id);
+		
+		Entity entity = datastore.get(key);
+		
+		Tweet tweet = buildTweet(entity);
+		
+		return tweet;
+	}
+	
 	public List<Tweet> list() {
 		Query<Entity> query = Query.newEntityQueryBuilder()
 			    .setKind("tweet")
-			    .setFilter(com.google.cloud.datastore.StructuredQuery.PropertyFilter.isNull("humanSentiment"))
+			    .setFilter(com.google.cloud.datastore.StructuredQuery.PropertyFilter.eq("humanSentiment", -1))
 			    .setOrderBy(OrderBy.asc("id")).setLimit(100)
 			    .build();
 		
@@ -87,21 +97,28 @@ public class TweetService {
 		while (result.hasNext()) {
 			Entity entity = result.next();
 			
-			com.dev.bruno.sentimentanalysis.tweets.model.Tweet tweet = new Tweet();
-			tweet.setId(entity.getLong("id"));
-			tweet.setText(entity.getString("text"));
-			
-			if(!entity.isNull("humanSentiment")) {
-				tweet.setHumanSentiment(entity.getLong("humanSentiment"));
-			}
-			
-			if(!entity.isNull("machineSentiment")) {
-				tweet.setMachineSentiment(entity.getLong("machineSentiment"));
-			}
+			Tweet tweet = buildTweet(entity);
 			
 			tweets.add(tweet);
 		}
 		
 		return tweets;
+	}
+
+	private Tweet buildTweet(Entity entity) {
+		Tweet tweet = new Tweet();
+		
+		tweet.setId(entity.getLong("id"));
+		tweet.setText(entity.getString("text"));
+		
+		if(!entity.isNull("humanSentiment")) {
+			tweet.setHumanSentiment(entity.getLong("humanSentiment"));
+		}
+		
+		if(!entity.isNull("machineSentiment")) {
+			tweet.setMachineSentiment(entity.getLong("machineSentiment"));
+		}
+		
+		return tweet;
 	}
 }

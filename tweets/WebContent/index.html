@@ -28,7 +28,7 @@
 		tweet.humanSentiment = sentiment;
 
 		$.ajax({
-    		url: "http://104.198.31.12/tweets/api/tweet",
+    		url: "./api/tweet",
 			type: "POST",
 	        contentType: "application/json; charset=utf-8",
 			dataType: "json",
@@ -43,7 +43,7 @@
     	$.ajax({
 		type: "GET",
     		dataType: "json",
-    		url: "http://104.198.31.12/tweets/api/tweet",
+    		url: "./api/tweet",
     		success: function (data) {
 			$("#tweets-container").html("");
 			$(data).each(function(index, child) {
@@ -56,7 +56,6 @@
     </script>
 </head>
 <body>
-
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-md-12">

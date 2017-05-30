@@ -1,1 +1,78 @@
 # Empty CSS file for your own CSS
+
+.container-fluid {
+    background-color: #f6f6f6 !important;
+}
+.panel-default {
+	background-color: transparent;
+	border: 0;
+	padding: 0;
+}
+
+.panel-body {
+	background-color: #dee9f3;
+	padding: 8px 0;
+    margin: 5px 0px;
+	border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.panel-body:nth-child(even) {
+	background-color: #ccd7e1;
+}
+
+.panel-body p {
+	margin: 5px 0 0 0;
+	color: #2D2D2D;
+	font-weight: 300;
+}
+
+.jumbotron {
+	margin: 10px 0;
+	border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.jumbotron h2 {
+	color: #1b4d7e ;
+	font-weight: bold;
+}
+
+.jumbotron p {
+	font-size: 1.45em;
+}
+
+.footer {
+	text-align: center;
+	font-size: 0.8em;
+	margin: 5px 0 10px 0;
+}
+
+.footer span, .panel-body span, .panel-body a {
+	font-weight: bold;
+}
+
+.panel-body a.link {
+	color: #1b4d7e;
+	cursor: pointer;
+}
+
+.alinhar_botoes {
+	text-align: right;
+}
+
+@media (max-width: 768px) {
+	.alinhar_botoes {
+		text-align: center;
+		margin-top: 10px;
+	}
+	.jumbotron h2 {
+		font-size: 1.4em;
+		text-align: center;
+	}
+
+	.jumbotron p {
+		font-size: 1em;
+	}
+
+}

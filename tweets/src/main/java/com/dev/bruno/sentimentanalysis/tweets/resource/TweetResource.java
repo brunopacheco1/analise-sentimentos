@@ -27,7 +27,7 @@ public class TweetResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response insert(Tweet tweet) {
-		service.insert(tweet);
+		service.update(tweet);
 		
 		return new Response(true);
 	}

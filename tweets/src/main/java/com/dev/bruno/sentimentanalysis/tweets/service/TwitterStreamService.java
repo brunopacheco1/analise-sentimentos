@@ -2,6 +2,9 @@ package com.dev.bruno.sentimentanalysis.tweets.service;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -82,9 +85,23 @@ public class TwitterStreamService {
 		
 		Tweet tweet = new Tweet();
 		
-		tweet.setId(status.getId());
+		tweet.setId(hash(String.valueOf(status.getId())));
 		tweet.setText(status.getText());
 		
 		service.insert(tweet);
+	}
+	
+	private String hash(String text) {
+		try {	
+			MessageDigest m = MessageDigest.getInstance("MD5");
+			m.update(text.getBytes(),0,text.length());
+		
+			return new BigInteger(1,m.digest()).toString(16);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 }

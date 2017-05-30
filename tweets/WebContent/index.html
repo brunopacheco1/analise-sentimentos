@@ -48,7 +48,7 @@
 			$("#tweets-container").html("");
 			$(data).each(function(index, child) {
 				tweets.set(child.id, child);
-				$("#tweets-container").append('<div id="tweet-' + child.id + '" class="row"><div class="col-md-8"><p>' + child.text + '</p></div><div class="col-md-4"><div class="btn-group"><button class="btn btn-default" type="button" onclick="updateSentiment(' + child.id + ',-1)"><em class="glyphicon glyphicon-minus-sign"></em>Negativo</button><button class="btn btn-default" type="button" onclick="updateSentiment(' + child.id + ',0)"><em class="glyphicon glyphicon-question-sign"></em>Neutro</button><button class="btn btn-default" type="button" onclick="updateSentiment(' + child.id + ',1)"><em class="glyphicon glyphicon-plus-sign"></em>Positivo</button></div></div></div>');
+				$("#tweets-container").append('<div id="tweet-' + child.id + '" class="row"><div class="col-md-8"><p>' + child.text + '</p></div><div class="col-md-4"><div class="btn-group"><button class="btn btn-default" type="button" onclick="updateSentiment(\'' + child.id + '\',-1)"><em class="glyphicon glyphicon-minus-sign"></em>Negativo</button><button class="btn btn-default" type="button" onclick="updateSentiment(\'' + child.id + '\',0)"><em class="glyphicon glyphicon-question-sign"></em>Neutro</button><button class="btn btn-default" type="button" onclick="updateSentiment(\'' + child.id + '\',1)"><em class="glyphicon glyphicon-plus-sign"></em>Positivo</button></div></div></div>');
 			});
             }
     	});

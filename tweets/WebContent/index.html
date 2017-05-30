@@ -49,7 +49,7 @@
 			$(data).each(function(index, child) {
 				tweets.set(child.id, child);
 				
-				$("#tweets-container").append('<div id="tweet-' + child.id + '" class="panel-body"><div class="col-md-9 col-sm-12 col-xs-12"><p>' + child.text + '</p></div><div class="col-md-3 col-sm-12 col-xs-12 alinhar_botoes"><div class="btn-group btn-group-sm"><button class="btn btn-danger" type="button" onclick="updateSentiment(\'' + child.id + '\',-1)"><em class="glyphicon glyphicon-minus-sign"></em> Negativo</button><button class="btn btn-warning" type="button" onclick="updateSentiment(\'' + child.id + '\',0)"><em class="glyphicon glyphicon-question-sign"></em> Neutro</button><button class="btn btn-success" type="button" onclick="updateSentiment(\'' + child.id + '\',1)"><em class="glyphicon glyphicon-plus-sign"></em> Positivo</button></div></div></div>');
+				$("#tweets-container").append('<div id="tweet-' + child.id + '" class="panel-body"><div class="col-md-8 col-sm-12 col-xs-12"><p>' + child.text + '</p></div><div class="col-md-4 col-sm-12 col-xs-12 alinhar_botoes"><div class="btn-group btn-group-sm"><button class="btn btn-danger" type="button" onclick="updateSentiment(\'' + child.id + '\',-1)"><em class="glyphicon glyphicon-minus-sign"></em> Negativo</button><button class="btn btn-warning" type="button" onclick="updateSentiment(\'' + child.id + '\',0)"><em class="glyphicon glyphicon-question-sign"></em> Neutro</button><button class="btn btn-success" type="button" onclick="updateSentiment(\'' + child.id + '\',1)"><em class="glyphicon glyphicon-plus-sign"></em> Positivo</button></div></div></div>');
 			});
             }
     	});
@@ -66,10 +66,9 @@
 						<img src="img/img_ilustrativa.jpg" class="img-circle img-responsive center-block">
 					</div>
 					<div class="col-md-10 col-sm-8 col-xs-12">
-						<h2>Análise de Sentimentos: Uma Visão Sobre o Governo de Michel Temer 
-						</h2>
-						<p>Este projeto tem por finalidade implementar técnicas de aprendizado de máquina, para análise de sentimento. Para tal, serão utilizados tweets relacionados ao atual governo federal, do Presidente Michel Temer. Serão utilizadas técnicas de análise de sentimento baseado em algoritmo de aprendizado de máquina supervisionados.</p>
-						<p>Esta ferramenta foi desenvolvida para apoio à coleta de informações, para que um banco de dados de tweets sentimentalizados seja desenvolvido, servindo ao algoritmo como dataset de treino, e depois possamos avaliar a acurácia de posteriores resultados.
+						<h2>Análise de Sentimentos: Uma Visão Sobre o Governo de Michel Temer</h2>
+						<p>Este projeto tem por finalidade implementar técnicas de aprendizado de máquina supervisionado, para análise de sentimento em mídias sociais, precisamente no Twitter, sobre o atual Presidente da República, Michel Temer.</p>
+						<p>Esta ferramenta foi desenvolvida para apoio à coleta de informações, onde um banco de dados de tweets sentimentalizados será desenvolvido. Este dataset será utilizado pelo algoritmo para treino e comparação com posteriores resultados de sentimentalização automatizada.
 					</div>
 					<div style="clear: both;"></div>
 					
@@ -83,7 +82,7 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-md-12 footer">
-				Interface de apresentação dos resultados do trabalho de <span>Bruno Pacheco</span>. Trababalho de conclusão de curos da <span>pós-graduação XXXX</span>.
+				Desenvolvido por <span>Bruno Pacheco Lopes da Silva</span>, MBA em Engenharia de Software - <span>Escola Politécnica / UFRJ</span>.
 			</div>
 		</div>
 	</div>

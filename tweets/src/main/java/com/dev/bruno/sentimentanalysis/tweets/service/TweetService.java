@@ -147,7 +147,7 @@ public class TweetService {
 	public List<Tweet> list() {
 		Query<Entity> query = Query.newEntityQueryBuilder().setKind("tweet")
 				.setFilter(com.google.cloud.datastore.StructuredQuery.PropertyFilter.isNull("humanSentiment"))
-				.setOrderBy(OrderBy.asc("id")).setLimit(100).build();
+				.setOrderBy(OrderBy.asc("id")).setLimit(20).build();
 
 		QueryResults<Entity> result = datastore.run(query);
 

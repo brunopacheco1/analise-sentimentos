@@ -48,7 +48,8 @@
 			$("#tweets-container").html("");
 			$(data).each(function(index, child) {
 				tweets.set(child.id, child);
-				$("#tweets-container").append('<div id="tweet-' + child.id + '" class="row"><div class="col-md-8"><p>' + child.text + '</p></div><div class="col-md-4"><div class="btn-group"><button class="btn btn-default" type="button" onclick="updateSentiment(\'' + child.id + '\',-1)"><em class="glyphicon glyphicon-minus-sign"></em>Negativo</button><button class="btn btn-default" type="button" onclick="updateSentiment(\'' + child.id + '\',0)"><em class="glyphicon glyphicon-question-sign"></em>Neutro</button><button class="btn btn-default" type="button" onclick="updateSentiment(\'' + child.id + '\',1)"><em class="glyphicon glyphicon-plus-sign"></em>Positivo</button></div></div></div>');
+				
+				$("#tweets-container").append('<div id="tweet-' + child.id + '" class="panel-body"><div class="col-md-9 col-sm-12 col-xs-12"><p>' + child.text + '</p></div><div class="col-md-3 col-sm-12 col-xs-12 alinhar_botoes"><div class="btn-group btn-group-sm"><button class="btn btn-danger" type="button" onclick="updateSentiment(\'' + child.id + '\',-1)"><em class="glyphicon glyphicon-minus-sign"></em> Negativo</button><button class="btn btn-warning" type="button" onclick="updateSentiment(\'' + child.id + '\',0)"><em class="glyphicon glyphicon-question-sign"></em> Neutro</button><button class="btn btn-success" type="button" onclick="updateSentiment(\'' + child.id + '\',1)"><em class="glyphicon glyphicon-plus-sign"></em> Positivo</button></div></div></div>');
 			});
             }
     	});
@@ -75,75 +76,7 @@
 				</div>
 				
 				<div id="tweets-container" class="col-md-12 panel panel-default">
-				
-					<div id="tweet-" class="panel-body">
-						<div class="col-md-9 col-sm-12 col-xs-12">
-							<p><span>@NettoQueiroz1</span> <span>@luciana_onofre</span> <span>@JornalOGlobo</span> <span>@zehdeabreu</span> <span>@Ancelmocom</span> <span>#DIRETASJÁ</span> NÃO É GOLPE, SIM UM CONTRAGOLPE, cujo significado é: Movimento político que visa a anular um golpe de Estado anterior. <span>#ForaTemer</span></p>
-						</div>
-						<div class="col-md-3 col-sm-12 col-xs-12 alinhar_botoes">
-							<div class="btn-group btn-group-sm">
-								<button class="btn btn-danger" type="button" ><em class="glyphicon glyphicon-minus-sign"></em> Negativo</button>
-								<button class="btn btn-warning" type="button" ><em class="glyphicon glyphicon-question-sign"></em> Neutro</button>
-								<button class="btn btn-success" type="button" ><em class="glyphicon glyphicon-plus-sign"></em> Positivo</button>
-							</div>
-						</div>
-					</div>
-					
-					<div id="tweet-2" class="panel-body">
-						<div class="col-md-9 col-sm-12 col-xs-12">
-							<p>O <span>#Pokemon</span> do Mal mentindo para o 🌎 !Canalhamon ! "tenho habilidade para governar" <span>#ForaTemer</span> <span>#CaiTemer</span> <span>#SaiTemer</span> <a class="link">https://t.co/YuBO7JXNwQ</a></p>
-						</div>
-						<div class="col-md-3 col-sm-12 col-xs-12 alinhar_botoes">
-							<div class="btn-group btn-group-sm">
-								<button class="btn btn-danger" type="button" ><em class="glyphicon glyphicon-minus-sign"></em> Negativo</button>
-								<button class="btn btn-warning" type="button" ><em class="glyphicon glyphicon-question-sign"></em> Neutro</button>
-								<button class="btn btn-success" type="button" ><em class="glyphicon glyphicon-plus-sign"></em> Positivo</button>
-							</div>
-						</div>
-					</div>
-					<div id="tweet-3" class="panel-body">
-						<div class="col-md-9 col-sm-12 col-xs-12">
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur varius vitae massa quis blandit. Etiam ornare, felis id blandit fringilla.</p>
-						</div>
-						<div class="col-md-3 col-sm-12 col-xs-12 alinhar_botoes">
-							<div class="btn-group btn-group-sm">
-								<button class="btn btn-danger" type="button" ><em class="glyphicon glyphicon-minus-sign"></em> Negativo</button>
-								<button class="btn btn-warning" type="button" ><em class="glyphicon glyphicon-question-sign"></em> Neutro</button>
-								<button class="btn btn-success" type="button" ><em class="glyphicon glyphicon-plus-sign"></em> Positivo</button>
-							</div>
-						</div>
-					</div>
-					<div id="tweet-4" class="panel-body">
-						<div class="col-md-9 col-sm-12 col-xs-12">
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur varius vitae massa quis blandit. Etiam ornare, felis id blandit fringilla.</p>
-						</div>
-						<div class="col-md-3 col-sm-12 col-xs-12 alinhar_botoes">
-							<div class="btn-group btn-group-sm">
-								<button class="btn btn-danger" type="button" ><em class="glyphicon glyphicon-minus-sign"></em> Negativo</button>
-								<button class="btn btn-warning" type="button" ><em class="glyphicon glyphicon-question-sign"></em> Neutro</button>
-								<button class="btn btn-success" type="button" ><em class="glyphicon glyphicon-plus-sign"></em> Positivo</button>
-							</div>
-						</div>
-					</div>
-					<div id="tweet-5" class="panel-body">
-						<div class="col-md-9 col-sm-12 col-xs-12">
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur varius vitae massa quis blandit. Etiam ornare, felis id blandit fringilla.</p>
-						</div>
-						<div class="col-md-3 col-sm-12 col-xs-12 alinhar_botoes">
-							<div class="btn-group btn-group-sm">
-								<button class="btn btn-danger" type="button" ><em class="glyphicon glyphicon-minus-sign"></em> Negativo</button>
-								<button class="btn btn-warning" type="button" ><em class="glyphicon glyphicon-question-sign"></em> Neutro</button>
-								<button class="btn btn-success" type="button" ><em class="glyphicon glyphicon-plus-sign"></em> Positivo</button>
-							</div>
-						</div>
-					</div>
-
-					
-					
 				</div>
-				
-				
-				
 			</div>
 		</div>
 	</div>

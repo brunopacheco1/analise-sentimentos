@@ -4,13 +4,22 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+
 import com.dev.bruno.sentimentanalysis.tweets.exception.AppException;
 import com.dev.bruno.sentimentanalysis.tweets.model.Tweet;
+import com.dev.bruno.sentimentanalysis.tweets.resource.JacksonConfig;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.datastore.Datastore;
 import com.google.cloud.datastore.DatastoreOptions;
@@ -33,6 +42,10 @@ public class TweetService {
 	@Resource(name = "credentials.folder")
 	private String credentialsFolder;
 
+	private Producer<String, String> producer;
+	
+	private Logger logger = Logger.getLogger(this.getClass().getName());
+	
 	@PostConstruct
 	private void init() {
 		try {
@@ -42,9 +55,18 @@ public class TweetService {
 					.build().getService();
 
 			keyFactory = datastore.newKeyFactory().setKind("tweet");
+			
+			Properties props = new Properties();
+			props.load(new FileInputStream(credentialsFolder + "/kafka.properties"));
+		    producer = new KafkaProducer<>(props);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, e.getMessage(), e);
 		}
+	}
+	
+	@PreDestroy
+	private void destroy() {
+		producer.close();
 	}
 
 	public void insert(Tweet tweet) {
@@ -81,6 +103,11 @@ public class TweetService {
 			transaction.add(entity);
 
 			transaction.commit();
+			
+			String json = JacksonConfig.getObjectMapper().writeValueAsString(tweet);
+			producer.send(new ProducerRecord<String, String>("tweets", json));
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, e.getMessage(), e);
 		} finally {
 			if (transaction.isActive()) {
 				transaction.rollback();

@@ -15,9 +15,12 @@ public class JacksonConfig implements ContextResolver<ObjectMapper> {
 
 	private static ObjectMapper objectMapper;
 
-	public JacksonConfig() throws Exception {
+	static {
 		objectMapper = new ObjectMapper();
 		objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"));
+	}
+
+	public JacksonConfig() {
 	}
 
 	@Override

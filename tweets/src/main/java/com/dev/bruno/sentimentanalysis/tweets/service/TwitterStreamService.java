@@ -18,7 +18,7 @@ import javax.inject.Inject;
 import org.apache.commons.io.IOUtils;
 
 import com.dev.bruno.sentimentanalysis.tweets.model.Tweet;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.dev.bruno.sentimentanalysis.tweets.resource.JacksonConfig;
 
 import twitter4j.FilterQuery;
 import twitter4j.Status;
@@ -49,9 +49,7 @@ public class TwitterStreamService {
 		try {
 			json = new String(IOUtils.toByteArray(new FileInputStream(credentialsFolder + "/twitter.json")));
 			
-			ObjectMapper mapper = new ObjectMapper();
-			
-			Map<String, String> credentials = mapper.readValue(json, HashMap.class);
+			Map<String, String> credentials = JacksonConfig.getObjectMapper().readValue(json, HashMap.class);
 			
 			StatusListener listener = new TweetStreamConsumer();
 	        

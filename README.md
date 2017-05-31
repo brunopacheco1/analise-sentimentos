@@ -2,7 +2,7 @@
 
 Este projeto tem por finalidade implementar técnicas de aprendizado de máquina supervisionado, para análise de sentimento em mídias sociais, precisamente no Twitter, sobre o atual Presidente da República, Michel Temer.
 
-Este projeto se divide em dois projetos:
+Este projeto se divide em dois módulos:
 - Tweets, API RESTFull e Interface Web para criação de dataset de treino e correção de sentimentalização, além de apresentação dos resultados.
 - Sentimentalizer, Aplicação Spark para indexação e sentimentalização dos tweets captados.
 

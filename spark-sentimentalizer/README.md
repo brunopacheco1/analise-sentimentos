@@ -1,3 +1,3 @@
-# Sentimentalizer - Spark App
+# Sentimentalizer
 
-Aplicação Spark para sentimentalização.
+Aplicação Spark para indexação e sentimentalização dos tweets captados.

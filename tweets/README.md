@@ -1,3 +1,3 @@
 # tweets
 
-Projeto RESTFul para processamento de tweets, baseado em hashtags. Pilha de tecnologia: Java (JavaEE 7 - JAX-RS, EJB).
+API RESTFull e Interface Web para criação de dataset de treino e correção de sentimentalização, além de apresentação dos resultados.

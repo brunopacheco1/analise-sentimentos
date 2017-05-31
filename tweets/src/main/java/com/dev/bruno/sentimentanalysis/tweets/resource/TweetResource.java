@@ -34,6 +34,14 @@ public class TweetResource {
 		return new Response(true);
 	}
 	
+	@POST
+	@Path("/process")
+	public Response process() {
+		service.processTweets();
+		
+		return new Response(true);
+	}
+	
 	@GET
 	public List<Tweet> listNullHumanSentiment(@QueryParam("limit") @DefaultValue("20") Integer limit) {
 		return service.listNullHumanSentiment(limit);

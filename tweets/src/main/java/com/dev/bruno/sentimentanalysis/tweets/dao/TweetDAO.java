@@ -158,6 +158,24 @@ public class TweetDAO {
 
 		return tweets;
 	}
+	
+	public List<Tweet> listNullMachineSentiment(Integer limit) {
+		Query<Entity> query = Query.newEntityQueryBuilder().setKind("tweet")
+				.setFilter(com.google.cloud.datastore.StructuredQuery.PropertyFilter.isNull("machineSentiment")).setLimit(limit).build();
+
+		QueryResults<Entity> result = datastore.run(query);
+
+		List<Tweet> tweets = new ArrayList<>();
+		while (result.hasNext()) {
+			Entity entity = result.next();
+
+			Tweet tweet = buildTweet(entity);
+
+			tweets.add(tweet);
+		}
+
+		return tweets;
+	}
 
 	private Tweet buildTweet(Entity entity) {
 		Tweet tweet = new Tweet();

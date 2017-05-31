@@ -73,4 +73,12 @@ public class TweetService {
 		
 		return null;
 	}
+	
+	public void processTweets() {
+		List<Tweet> tweets = dao.listNullMachineSentiment(100);
+		
+		for(Tweet tweet : tweets) {
+			topic.send(tweet);
+		}
+	}
 }

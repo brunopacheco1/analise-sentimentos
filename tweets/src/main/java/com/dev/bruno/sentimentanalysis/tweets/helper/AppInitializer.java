@@ -1,4 +1,4 @@
-package com.dev.bruno.sentimentanalysis.tweets.service;
+package com.dev.bruno.sentimentanalysis.tweets.helper;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -7,7 +7,7 @@ import javax.ejb.Startup;
 
 @Singleton
 @Startup
-public class AppInitializerService {
+public class AppInitializer {
 
 	@Resource(name="app.context")
 	private String appContext;

@@ -1,4 +1,4 @@
-package com.dev.bruno.sentimentanalysis.tweets.service;
+package com.dev.bruno.sentimentanalysis.tweets.helper;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;

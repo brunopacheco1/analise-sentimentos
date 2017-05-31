@@ -1,4 +1,4 @@
-package com.dev.bruno.sentimentanalysis.tweets.resource;
+package com.dev.bruno.sentimentanalysis.tweets.helper;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

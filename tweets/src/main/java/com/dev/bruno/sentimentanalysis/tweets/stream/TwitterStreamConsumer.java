@@ -1,13 +1,15 @@
-package com.dev.bruno.sentimentanalysis.tweets.service;
+package com.dev.bruno.sentimentanalysis.tweets.stream;
+
+import com.dev.bruno.sentimentanalysis.tweets.helper.ServiceLocator;
 
 import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
 
-public class TweetStreamConsumer implements StatusListener {
+public class TwitterStreamConsumer implements StatusListener {
 	
-	private TwitterStreamService service = (TwitterStreamService) ServiceLocator.getInstance().lookup(TwitterStreamService.class);
+	private TwitterStream service = (TwitterStream) ServiceLocator.getInstance().lookup(TwitterStream.class);
 
 	@Override
 	public void onStallWarning(StallWarning arg0) {

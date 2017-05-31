@@ -1,10 +1,7 @@
-package com.dev.bruno.sentimentanalysis.tweets.service;
+package com.dev.bruno.sentimentanalysis.tweets.stream;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,21 +14,20 @@ import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
 
-import com.dev.bruno.sentimentanalysis.tweets.model.Tweet;
-import com.dev.bruno.sentimentanalysis.tweets.resource.JacksonConfig;
+import com.dev.bruno.sentimentanalysis.tweets.helper.JacksonConfig;
+import com.dev.bruno.sentimentanalysis.tweets.service.TweetService;
 
 import twitter4j.FilterQuery;
 import twitter4j.Status;
 import twitter4j.StatusListener;
-import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.auth.AccessToken;
 
 @Singleton
 @Startup
-public class TwitterStreamService {
+public class TwitterStream {
 
-	private TwitterStream twitterStream;
+	private twitter4j.TwitterStream twitterStream;
 	
 	@Inject
 	private TweetService service;
@@ -51,7 +47,7 @@ public class TwitterStreamService {
 			
 			Map<String, String> credentials = JacksonConfig.getObjectMapper().readValue(json, HashMap.class);
 			
-			StatusListener listener = new TweetStreamConsumer();
+			StatusListener listener = new TwitterStreamConsumer();
 	        
 	        twitterStream = new TwitterStreamFactory().getInstance();
 	        
@@ -81,25 +77,6 @@ public class TwitterStreamService {
 			return;
 		}
 		
-		Tweet tweet = new Tweet();
-		
-		tweet.setId(hash(String.valueOf(status.getId())));
-		tweet.setText(status.getText());
-		
-		service.insert(tweet);
-	}
-	
-	private String hash(String text) {
-		try {	
-			MessageDigest m = MessageDigest.getInstance("MD5");
-			m.update(text.getBytes(),0,text.length());
-		
-			return new BigInteger(1,m.digest()).toString(16);
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return null;
+		service.insert(status.getId(), status.getText());
 	}
 }

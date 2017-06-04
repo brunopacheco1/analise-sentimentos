@@ -71,6 +71,12 @@ public class TweetDAO {
 			} else {
 				builder.setNull("machineSentiment");
 			}
+			
+			if (tweet.getCleanText() != null) {
+				builder.set("cleanText", tweet.getCleanText());
+			} else {
+				builder.setNull("cleanText");
+			}
 
 			FullEntity<Key> entity = builder.build();
 
@@ -113,7 +119,13 @@ public class TweetDAO {
 			} else {
 				builder.setNull("machineSentiment");
 			}
-
+			
+			if (tweet.getCleanText() != null) {
+				builder.set("cleanText", tweet.getCleanText());
+			} else {
+				builder.setNull("cleanText");
+			}
+			
 			entity = builder.build();
 
 			transaction.update(entity);

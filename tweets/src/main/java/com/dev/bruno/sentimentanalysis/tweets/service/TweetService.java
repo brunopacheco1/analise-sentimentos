@@ -32,8 +32,8 @@ public class TweetService {
 		tweet.setId(hash(String.valueOf(id)));
 		tweet.setText(text);
 		
-		dao.insert(tweet);
-		topic.send(tweet);
+		//dao.insert(tweet);
+		topic.send(tweet, "tweets-insert");
 	}
 
 	public void update(Tweet tweet) {
@@ -78,7 +78,7 @@ public class TweetService {
 		List<Tweet> tweets = dao.listNullMachineSentiment(100);
 		
 		for(Tweet tweet : tweets) {
-			topic.send(tweet);
+			topic.send(tweet, "tweets-evaluation");
 		}
 	}
 }

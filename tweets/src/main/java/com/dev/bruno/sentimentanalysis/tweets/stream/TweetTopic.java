@@ -46,10 +46,10 @@ public class TweetTopic {
 		producer.close();
 	}
 	
-	public void send(Tweet tweet) {
+	public void send(Tweet tweet, String topic) {
 		try {
 			String json = JacksonConfig.getObjectMapper().writeValueAsString(tweet);
-			producer.send(new ProducerRecord<String, String>("tweets-evaluation", json));
+			producer.send(new ProducerRecord<String, String>(topic, json));
 		} catch (IOException e) {
 			logger.log(Level.SEVERE, e.getMessage(), e);
 		}

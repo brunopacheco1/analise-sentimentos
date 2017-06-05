@@ -34,7 +34,7 @@ import scala.collection.JavaConverters._
 import java.util.Properties
 
 object Sentimentalizer {
-  
+
   private def process(keyFactory: KeyFactory, datastore: Datastore, jsonStr: String) {
     case class Model(id: String, text: String)
     implicit val modelFormat = jsonFormat2(Model)
@@ -100,13 +100,13 @@ object Sentimentalizer {
     spark.sql("INSERT INTO TABLE tweet SELECT * FROM temp_tweet")
 
     val consulta = spark.sql("SELECT * FROM tweet where sentiment is not null")
-    
+
     //INCLUIR AQUI TREINAMENTO DA INTELIGENCIA ARTIFICIAL
 
     val ssc = new StreamingContext(sc, Seconds(10))
-    
+
     val props = new Properties()
-		props.load(new FileInputStream("/opt/credentials/kafka.properties"));
+    props.load(new FileInputStream("/opt/credentials/kafka.properties"));
 
     val topics = Array("tweets-evaluation")
     val stream = KafkaUtils.createDirectStream[String, String](

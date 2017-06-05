@@ -105,7 +105,7 @@ object TweetProcessor {
     val stopWords: Broadcast[List[String]] = ssc.sparkContext.broadcast(list)
     
     val props = new Properties()
-		props.load(getClass().getResourceAsStream("kafka.properties"));
+		props.load(getClass().getResourceAsStream("/kafka.properties"));
 
     val topics = Array("tweets-insert")
     val stream = KafkaUtils.createDirectStream[String, String](

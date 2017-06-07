@@ -1,48 +1,38 @@
 package com.dev.bruno.sentimentanalysis
 
-import java.security.MessageDigest
-import org.apache.kafka.common.serialization.StringDeserializer
+import java.net.HttpURLConnection
+import java.net.URL
+import java.util.Properties
+
+import scala.collection.JavaConverters.propertiesAsScalaMapConverter
+import scala.io.Source
+
+import org.apache.lucene.analysis.br.RSLPStemmer
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
-import com.google.cloud.datastore.DatastoreOptions
-import java.io.FileInputStream
-import com.google.auth.oauth2.ServiceAccountCredentials
-import com.google.cloud.datastore.Query
-import com.google.cloud.datastore.StructuredQuery.OrderBy
-import com.google.cloud.datastore.Entity
-import com.google.cloud.datastore.QueryResults
-import com.google.cloud.datastore.ReadOption
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.types.StringType
-import org.apache.spark.sql.types.StructType
-import org.apache.spark.sql.types.StructField
-import org.apache.spark.sql.types.LongType
-import org.apache.spark.sql.Row
-import com.google.cloud.datastore.StructuredQuery.PropertyFilter
-import com.google.cloud.datastore.StructuredQuery.CompositeFilter
-import scala.collection.mutable.ListBuffer
+import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.streaming.Seconds
 import org.apache.spark.streaming.StreamingContext
 import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
 import org.apache.spark.streaming.kafka010.KafkaUtils
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
-import spray.json._
-import DefaultJsonProtocol._
-import com.google.cloud.datastore.Datastore
-import com.google.cloud.datastore.KeyFactory
-import scala.collection.JavaConverters._
-import java.util.Properties
-import org.apache.lucene.analysis.br.RSLPStemmer
-import scala.io.Source
-import org.apache.spark.broadcast.Broadcast
+
+import spray.json.DefaultJsonProtocol.RootJsObjectFormat
+import spray.json.DefaultJsonProtocol.StringJsonFormat
+import spray.json.DefaultJsonProtocol.jsonFormat2
+import spray.json.JsNull
+import spray.json.JsObject
+import spray.json.JsString
+import spray.json.pimpAny
+import spray.json.pimpString
 
 object TweetProcessor {
-  
+
   def getBarebonesTweetText(tweetText: String, stopWordsList: List[String]): String = {
     //Remove URLs, RT, MT and other redundant chars / strings from the tweets.
-    
+
     val stemmer = new RSLPStemmer()
-		
+
     tweetText.toLowerCase()
       .replaceAll("\n", "")
       .replaceAll("rt\\s+", "")
@@ -57,55 +47,56 @@ object TweetProcessor {
       .split("\\s+")
       .filter(_.matches("^[a-zA-ZàÀáéíóúÁÉÍÓÚâêîôûÂÊÎÔÛãẽĩõũÃẼĨÕŨçÇüÜ]+$"))
       .filter(!stopWordsList.contains(_)).map(word => stemmer.stem(word)).mkString(" ")
-    //.fold("")((a,b) => a.trim + " " + b.trim).trim
   }
-  
-  private def process(keyFactory: KeyFactory, datastore: Datastore, stopWords: Broadcast[List[String]], jsonStr: String) {
+
+  private def process(apiAddress : String, stopWords: Broadcast[List[String]], jsonStr: String) {
     case class Model(id: String, text: String)
     implicit val modelFormat = jsonFormat2(Model)
     val json = jsonStr.parseJson.convertTo[Model]
 
-    val key = keyFactory.newKey(json.id);
-    
-    val builder: Entity.Builder = Entity.newBuilder(key)
-    
-    builder.set("id", json.id)
-    
-    builder.set("text", json.text)
-    
-		builder.setNull("machineSentiment")
-		
-		builder.setNull("humanSentiment")
-		
-		val cleanText = getBarebonesTweetText(json.text, stopWords.value)
-		
-		println(json.text + " --> " + cleanText);
-		
-    builder.set("cleanText", cleanText)
-		
-    val newEntity = builder.build()
+    val cleanText = getBarebonesTweetText(json.text, stopWords.value)
 
-		datastore.add(newEntity)
+    val tweet = JsObject("id" -> JsString(json.id), "text" -> JsString(json.text), "cleanText" -> JsString(cleanText), "humanSentiment" -> JsNull, "machineSentiment" -> JsNull)
+
+    val newJson = tweet.toJson.prettyPrint
+
+    val url = new URL("http://" + apiAddress + "/tweets/api/tweet")
+    val conn = url.openConnection.asInstanceOf[HttpURLConnection]
+
+    conn.setDoOutput(true)
+    conn.setRequestMethod("POST")
+    conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8")
+
+    val os = conn.getOutputStream
+    os.write(newJson.getBytes)
+    os.flush
+    os.close
+
+		val responseCode = conn.getResponseCode()
+		
+		println("POST[" + responseCode + "] --> " + json.id)
   }
 
   def main(args: Array[String]): Unit = {
-
+ 
+    var apiAddress : String = null
+    
+    if(args.length == 1) {
+      apiAddress = args(0).split("=")(1)
+    }
+    
     val sparkConf = new SparkConf().setAppName("tweet-processor").setMaster("local[*]")
 
     val sc = new SparkContext(sparkConf)
-    
-    val datastore = DatastoreOptions.newBuilder().setProjectId("sentimentalizer-169016").setCredentials(ServiceAccountCredentials.fromStream(getClass().getResourceAsStream("/sentimentalizer.json"))).build().getService()
-
-    val keyFactory = datastore.newKeyFactory().setKind("tweet")
 
     val ssc = new StreamingContext(sc, Seconds(10))
-    
-    val list:List[String] = Source.fromInputStream(getClass().getResourceAsStream("/stopwords.txt")).getLines().map(line => line.trim()).toList
-    
+
+    val list: List[String] = Source.fromInputStream(getClass().getResourceAsStream("/stopwords.txt")).getLines().map(line => line.trim()).toList
+
     val stopWords: Broadcast[List[String]] = ssc.sparkContext.broadcast(list)
-    
+
     val props = new Properties()
-		props.load(getClass().getResourceAsStream("/kafka.properties"));
+    props.load(getClass().getResourceAsStream("/kafka.properties"));
 
     val topics = Array("tweets-insert")
     val stream = KafkaUtils.createDirectStream[String, String](
@@ -116,7 +107,7 @@ object TweetProcessor {
     val streamMap = stream.map(record => (record.key, record.value))
 
     streamMap.foreachRDD(rdd => {
-      val resultStreamMap = rdd.collect().foreach(el => process(keyFactory, datastore, stopWords, el._2))
+      val resultStreamMap = rdd.collect().foreach(el => process(apiAddress, stopWords, el._2))
     })
 
     ssc.start()

@@ -77,6 +77,6 @@ public class TwitterStream {
 			return;
 		}
 		
-		service.insert(status.getId(), status.getText());
+		service.create(status.getId(), status.getText());
 	}
 }

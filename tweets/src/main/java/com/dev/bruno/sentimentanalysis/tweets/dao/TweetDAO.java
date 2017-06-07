@@ -202,6 +202,10 @@ public class TweetDAO {
 		if (!entity.isNull("machineSentiment")) {
 			tweet.setMachineSentiment(entity.getLong("machineSentiment"));
 		}
+		
+		if (!entity.isNull("cleanText")) {
+			tweet.setCleanText(entity.getString("cleanText"));
+		}
 
 		return tweet;
 	}

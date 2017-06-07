@@ -26,6 +26,8 @@ public class TweetTopic {
 	@Resource(name = "credentials.folder")
 	private String credentialsFolder;
 	
+	public static final String INSERT_TOPIC = "tweets-insert";
+	
 	private Producer<String, String> producer;
 	
 	private Logger logger = Logger.getLogger(this.getClass().getName());
@@ -46,10 +48,10 @@ public class TweetTopic {
 		producer.close();
 	}
 	
-	public void send(Tweet tweet, String topic) {
+	public void send(Tweet tweet) {
 		try {
 			String json = JacksonConfig.getObjectMapper().writeValueAsString(tweet);
-			producer.send(new ProducerRecord<String, String>(topic, json));
+			producer.send(new ProducerRecord<String, String>(INSERT_TOPIC, json));
 		} catch (IOException e) {
 			logger.log(Level.SEVERE, e.getMessage(), e);
 		}

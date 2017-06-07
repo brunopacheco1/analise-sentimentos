@@ -112,7 +112,7 @@
 		<dependency>
 			<groupId>com.google.cloud</groupId>
 			<artifactId>google-cloud-datastore</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2</version>
 		</dependency>
 
 		<dependency>
@@ -120,11 +120,11 @@
 			<artifactId>guava</artifactId>
 			<version>22.0</version>
 		</dependency>
-
+		
 		<dependency>
-			<groupId>jRSLP</groupId>
-			<artifactId>jRSLP</artifactId>
-			<version>1.0</version>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-analyzers</artifactId>
+			<version>3.5.0</version>
 		</dependency>
 	</dependencies>
 

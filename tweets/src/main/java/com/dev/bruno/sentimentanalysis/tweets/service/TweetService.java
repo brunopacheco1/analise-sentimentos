@@ -22,7 +22,7 @@ public class TweetService {
 	@Inject
 	private TweetTopic topic;
 
-	public void insert(Long id, String text) {
+	public void create(Long id, String text) {
 		if (id == null || text == null) {
 			throw new AppException("id e text são campos obrigatórios.");
 		}
@@ -32,8 +32,15 @@ public class TweetService {
 		tweet.setId(hash(String.valueOf(id)));
 		tweet.setText(text);
 		
-		//dao.insert(tweet);
-		topic.send(tweet, "tweets-insert");
+		topic.send(tweet);
+	}
+	
+	public void insert(Tweet tweet) {
+		if (tweet.getId() == null || tweet.getText() == null) {
+			throw new AppException("id e text são campos obrigatórios.");
+		}
+		
+		dao.insert(tweet);
 	}
 
 	public void update(Tweet tweet) {
@@ -72,13 +79,5 @@ public class TweetService {
 		}
 		
 		return null;
-	}
-	
-	public void processTweets() {
-		List<Tweet> tweets = dao.listNullMachineSentiment(100);
-		
-		for(Tweet tweet : tweets) {
-			topic.send(tweet, "tweets-evaluation");
-		}
 	}
 }

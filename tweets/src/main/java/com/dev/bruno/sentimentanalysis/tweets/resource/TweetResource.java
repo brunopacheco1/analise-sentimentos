@@ -8,6 +8,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -29,15 +30,15 @@ public class TweetResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response insert(Tweet tweet) {
-		service.update(tweet);
+		service.insert(tweet);
 		
 		return new Response(true);
 	}
 	
-	@POST
-	@Path("/process")
-	public Response process() {
-		service.processTweets();
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response update(Tweet tweet) {
+		service.update(tweet);
 		
 		return new Response(true);
 	}

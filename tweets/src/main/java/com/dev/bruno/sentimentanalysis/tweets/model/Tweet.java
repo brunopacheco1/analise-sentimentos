@@ -10,8 +10,6 @@ public class Tweet implements Serializable {
 	
 	private String text;
 	
-	private String cleanText;
-	
 	private Long humanSentiment;
 	
 	private Long machineSentiment;
@@ -46,13 +44,5 @@ public class Tweet implements Serializable {
 
 	public void setMachineSentiment(Long machineSentiment) {
 		this.machineSentiment = machineSentiment;
-	}
-
-	public String getCleanText() {
-		return cleanText;
-	}
-
-	public void setCleanText(String cleanText) {
-		this.cleanText = cleanText;
 	}
 }

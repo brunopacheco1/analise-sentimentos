@@ -25,42 +25,25 @@ import spray.json.JsObject
 import spray.json.JsString
 import spray.json.pimpAny
 import spray.json.pimpString
+import org.apache.spark.mllib.classification.NaiveBayesModel
+import org.apache.spark.mllib.feature.HashingTF
+import org.apache.spark.mllib.linalg.Vector
+import spray.json.JsNumber
 
 object TweetProcessor {
-
-  def getBarebonesTweetText(tweetText: String, stopWordsList: List[String]): String = {
-    //Remove URLs, RT, MT and other redundant chars / strings from the tweets.
-
-    val stemmer = new RSLPStemmer()
-
-    tweetText.toLowerCase()
-      .replaceAll("\n", "")
-      .replaceAll("rt\\s+", "")
-      .replaceAll("\\s+@\\w+", "")
-      .replaceAll("@\\w+", "")
-      .replaceAll("\\s+#\\w+", "")
-      .replaceAll("#\\w+", "")
-      .replaceAll("(?:https?|http?)://[\\w/%.-]+", "")
-      .replaceAll("(?:https?|http?)://[\\w/%.-]+\\s+", "")
-      .replaceAll("(?:https?|http?)//[\\w/%.-]+\\s+", "")
-      .replaceAll("(?:https?|http?)//[\\w/%.-]+", "").replaceAll("[^a-zA-Z\\sàÀáéíóúÁÉÍÓÚâêîôûÂÊÎÔÛãẽĩõũÃẼĨÕŨçÇüÜ]", "")
-      .split("\\s+")
-      .filter(_.matches("^[a-zA-ZàÀáéíóúÁÉÍÓÚâêîôûÂÊÎÔÛãẽĩõũÃẼĨÕŨçÇüÜ]+$"))
-      .filter(!stopWordsList.contains(_)).map(word => stemmer.stem(word)).mkString(" ")
-  }
-
-  private def process(apiAddress : String, stopWords: Broadcast[List[String]], jsonStr: String) {
+  
+  private def process(apiAddress : String, stopWords: Broadcast[List[String]], jsonStr: String, model: NaiveBayesModel) {
     case class Model(id: String, text: String)
     implicit val modelFormat = jsonFormat2(Model)
     val json = jsonStr.parseJson.convertTo[Model]
 
-    val cleanText = getBarebonesTweetText(json.text, stopWords.value)
+    val polarity = TweetAnalyser.predict(json.text, stopWords, model)
 
-    val tweet = JsObject("id" -> JsString(json.id), "text" -> JsString(json.text), "cleanText" -> JsString(cleanText), "humanSentiment" -> JsNull, "machineSentiment" -> JsNull)
+    val tweet = JsObject("id" -> JsString(json.id), "text" -> JsString(json.text), "humanSentiment" -> JsNull, "machineSentiment" -> JsNumber(polarity))
 
     val newJson = tweet.toJson.prettyPrint
 
-    val url = new URL("http://" + apiAddress + "/tweets/api/tweet")
+    val url = new URL("http://35.184.28.251/tweets/api/tweet")
     val conn = url.openConnection.asInstanceOf[HttpURLConnection]
 
     conn.setDoOutput(true)
@@ -81,8 +64,11 @@ object TweetProcessor {
  
     var apiAddress : String = null
     
-    if(args.length == 1) {
+    var naivesBayesModelPath : String = null
+    
+    if(args.length == 2) {
       apiAddress = args(0).split("=")(1)
+      naivesBayesModelPath = args(1).split("=")(1)
     }
     
     val sparkConf = new SparkConf().setAppName("tweet-processor").setMaster("local[*]")
@@ -91,9 +77,10 @@ object TweetProcessor {
 
     val ssc = new StreamingContext(sc, Seconds(10))
 
-    val list: List[String] = Source.fromInputStream(getClass().getResourceAsStream("/stopwords.txt")).getLines().map(line => line.trim()).toList
-
-    val stopWords: Broadcast[List[String]] = ssc.sparkContext.broadcast(list)
+    val naiveBayesModel = NaiveBayesModel.load(sc, naivesBayesModelPath)
+    
+    val stopWordsList: List[String] = Source.fromInputStream(getClass().getResourceAsStream("/stopwords.txt")).getLines().map(line => line.trim()).toList
+    val stopWords: Broadcast[List[String]] = ssc.sparkContext.broadcast(stopWordsList)
 
     val props = new Properties()
     props.load(getClass().getResourceAsStream("/kafka.properties"));
@@ -104,10 +91,10 @@ object TweetProcessor {
       PreferConsistent,
       Subscribe[String, String](topics, props.asScala))
 
-    val streamMap = stream.map(record => (record.key, record.value))
+    val kafkaRDDs = stream.map(record => (record.key, record.value))
 
-    streamMap.foreachRDD(rdd => {
-      val resultStreamMap = rdd.collect().foreach(el => process(apiAddress, stopWords, el._2))
+    kafkaRDDs.foreachRDD(rdd => {
+       rdd.foreach(el => process(apiAddress, stopWords, el._2, naiveBayesModel))
     })
 
     ssc.start()

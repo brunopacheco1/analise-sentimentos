@@ -1,9 +1,14 @@
 package com.dev.bruno.sentimentanalysis.tweets.service;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -79,5 +84,17 @@ public class TweetService {
 		}
 		
 		return null;
+	}
+
+	public File getFile() throws IOException {
+		List<Tweet> tweets = dao.listNotNullHumanSentiment();
+		
+		Path path = Files.createTempFile("tweets", ".csv");
+		
+		List<String> lines = tweets.stream().map(tweet -> tweet.getHumanSentiment() + ";" + tweet.getText().replaceAll("\"", "").replaceAll(";", "").replaceAll("\n", " ").replaceAll("\r", " ").replaceAll("\\s+", " ")).collect(Collectors.toList());
+		
+		Files.write(path, lines);
+		
+		return path.toFile();
 	}
 }

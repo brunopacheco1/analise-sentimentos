@@ -22,7 +22,9 @@ import com.google.cloud.datastore.Key;
 import com.google.cloud.datastore.KeyFactory;
 import com.google.cloud.datastore.Query;
 import com.google.cloud.datastore.QueryResults;
+import com.google.cloud.datastore.StructuredQuery.CompositeFilter;
 import com.google.cloud.datastore.StructuredQuery.OrderBy;
+import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
 import com.google.cloud.datastore.Transaction;
 
 @Stateless
@@ -144,6 +146,23 @@ public class TweetDAO {
 		Query<Entity> query = Query.newEntityQueryBuilder().setKind("tweet")
 				.setFilter(com.google.cloud.datastore.StructuredQuery.PropertyFilter.isNull("humanSentiment"))
 				.setOrderBy(OrderBy.asc("id")).setLimit(limit).build();
+
+		QueryResults<Entity> result = datastore.run(query);
+
+		List<Tweet> tweets = new ArrayList<>();
+		while (result.hasNext()) {
+			Entity entity = result.next();
+
+			Tweet tweet = buildTweet(entity);
+
+			tweets.add(tweet);
+		}
+
+		return tweets;
+	}
+	
+	public List<Tweet> listNotNullHumanSentiment() {
+		Query<Entity> query = Query.newEntityQueryBuilder().setKind("tweet").setFilter(CompositeFilter.and(PropertyFilter.ge("humanSentiment", 0), PropertyFilter.le("humanSentiment", 4))).build();
 
 		QueryResults<Entity> result = datastore.run(query);
 

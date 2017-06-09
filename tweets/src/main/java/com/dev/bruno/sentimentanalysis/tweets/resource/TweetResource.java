@@ -1,5 +1,7 @@
 package com.dev.bruno.sentimentanalysis.tweets.resource;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -19,7 +21,6 @@ import com.dev.bruno.sentimentanalysis.tweets.model.Response;
 import com.dev.bruno.sentimentanalysis.tweets.model.Tweet;
 import com.dev.bruno.sentimentanalysis.tweets.service.TweetService;
 
-@Produces(MediaType.APPLICATION_JSON)
 @Stateless
 @Path("/tweet")
 public class TweetResource {
@@ -28,6 +29,7 @@ public class TweetResource {
 	private TweetService service;
 	
 	@POST
+	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response insert(Tweet tweet) {
 		service.insert(tweet);
@@ -36,6 +38,7 @@ public class TweetResource {
 	}
 	
 	@PUT
+	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response update(Tweet tweet) {
 		service.update(tweet);
@@ -44,13 +47,22 @@ public class TweetResource {
 	}
 	
 	@GET
+	@Produces(MediaType.APPLICATION_JSON)
 	public List<Tweet> listNullHumanSentiment(@QueryParam("limit") @DefaultValue("20") Integer limit) {
 		return service.listNullHumanSentiment(limit);
 	}
 	
 	@GET
 	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
 	public Tweet get(@PathParam("id") String id) {
 		return service.get(id);
+	}
+	
+	@GET
+	@Path("/file")
+	@Produces(MediaType.TEXT_PLAIN)
+	public File getFile() throws IOException {
+		return service.getFile();
 	}
 }

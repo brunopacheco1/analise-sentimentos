@@ -43,7 +43,7 @@ object TweetProcessor {
 
     val newJson = tweet.toJson.prettyPrint
 
-    val url = new URL("http://35.184.28.251/tweets/api/tweet")
+    val url = new URL("http://" + apiAddress + "/tweets/api/tweet")
     val conn = url.openConnection.asInstanceOf[HttpURLConnection]
 
     conn.setDoOutput(true)

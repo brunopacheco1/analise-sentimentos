@@ -25,7 +25,8 @@ import spray.json.JsObject
 import spray.json.JsString
 import spray.json.pimpAny
 import spray.json.pimpString
-import org.apache.spark.mllib.classification.NaiveBayesModel
+import org.apache.spark.mllib.regression.LabeledPoint
+import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
 import org.apache.spark.mllib.feature.HashingTF
 import org.apache.spark.mllib.linalg.Vector
 import spray.json.JsNumber
@@ -64,11 +65,8 @@ object TweetProcessor {
  
     var apiAddress : String = null
     
-    var naivesBayesModelPath : String = null
-    
-    if(args.length == 2) {
+    if(args.length == 1) {
       apiAddress = args(0).split("=")(1)
-      naivesBayesModelPath = args(1).split("=")(1)
     }
     
     val sparkConf = new SparkConf().setAppName("tweet-processor").setMaster("local[*]")
@@ -76,12 +74,29 @@ object TweetProcessor {
     val sc = new SparkContext(sparkConf)
 
     val ssc = new StreamingContext(sc, Seconds(10))
-
-    val naiveBayesModel = NaiveBayesModel.load(sc, naivesBayesModelPath)
     
     val stopWordsList: List[String] = Source.fromInputStream(getClass().getResourceAsStream("/stopwords.txt")).getLines().map(line => line.trim()).toList
     val stopWords: Broadcast[List[String]] = ssc.sparkContext.broadcast(stopWordsList)
 
+    //CARREGANDO ARQUIVO CSV COM TWEETS SENTIMENTALIZADOS POR PESSOAS - BEGIN
+    
+    val list = Source.fromURL("http://" + apiAddress + "/tweets/api/tweet/file").mkString.split("\n")
+    
+    val rdd = sc.parallelize(list)
+    
+    val rows = rdd.map(line => {
+      val split = line.split(";")
+      (split(0).toInt, split(1))
+    })
+    
+    val labeledRDD = rows.map(row => LabeledPoint(row._1, TweetAnalyser.transformFeatures(row._2, stopWords)))
+    
+    labeledRDD.cache()
+
+    val naiveBayesModel: NaiveBayesModel = NaiveBayes.train(labeledRDD, lambda = 1.0, modelType = "multinomial")
+    
+    //CARREGANDO ARQUIVO CSV COM TWEETS SENTIMENTALIZADOS POR PESSOAS - END
+    
     val props = new Properties()
     props.load(getClass().getResourceAsStream("/kafka.properties"));
 

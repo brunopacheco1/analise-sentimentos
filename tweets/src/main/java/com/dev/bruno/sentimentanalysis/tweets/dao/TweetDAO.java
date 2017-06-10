@@ -3,6 +3,7 @@ package com.dev.bruno.sentimentanalysis.tweets.dao;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -60,7 +61,7 @@ public class TweetDAO {
 			Key key = keyFactory.newKey(tweet.getId());
 
 			FullEntity.Builder<Key> builder = FullEntity.newBuilder(key).set("id", tweet.getId()).set("text",
-					tweet.getText());
+					tweet.getText()).set("date", tweet.getDate().getTime());
 
 			if (tweet.getHumanSentiment() != null) {
 				builder.set("humanSentiment", tweet.getHumanSentiment());
@@ -201,6 +202,7 @@ public class TweetDAO {
 
 		tweet.setId(entity.getString("id"));
 		tweet.setText(entity.getString("text"));
+		tweet.setDate(new Date(entity.getLong("date")));
 
 		if (!entity.isNull("humanSentiment")) {
 			tweet.setHumanSentiment(entity.getLong("humanSentiment"));

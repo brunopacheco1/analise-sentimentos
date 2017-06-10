@@ -17,9 +17,7 @@ import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
 import org.apache.spark.streaming.kafka010.KafkaUtils
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 
-import spray.json.DefaultJsonProtocol.RootJsObjectFormat
-import spray.json.DefaultJsonProtocol.StringJsonFormat
-import spray.json.DefaultJsonProtocol.jsonFormat2
+import spray.json.DefaultJsonProtocol._
 import spray.json.JsNull
 import spray.json.JsObject
 import spray.json.JsString
@@ -34,13 +32,13 @@ import spray.json.JsNumber
 object TweetProcessor {
   
   private def process(apiAddress : String, stopWords: Broadcast[List[String]], jsonStr: String, model: NaiveBayesModel) {
-    case class Model(id: String, text: String)
-    implicit val modelFormat = jsonFormat2(Model)
+    case class Model(id: String, text: String, date: String)
+    implicit val modelFormat = jsonFormat3(Model)
     val json = jsonStr.parseJson.convertTo[Model]
 
     val polarity = TweetAnalyser.predict(json.text, stopWords, model)
 
-    val tweet = JsObject("id" -> JsString(json.id), "text" -> JsString(json.text), "humanSentiment" -> JsNull, "machineSentiment" -> JsNumber(polarity))
+    val tweet = JsObject("id" -> JsString(json.id), "text" -> JsString(json.text), "date" -> JsString(json.date), "humanSentiment" -> JsNull, "machineSentiment" -> JsNumber(polarity))
 
     val newJson = tweet.toJson.prettyPrint
 
@@ -80,7 +78,7 @@ object TweetProcessor {
 
     //CARREGANDO ARQUIVO CSV COM TWEETS SENTIMENTALIZADOS POR PESSOAS - BEGIN
     
-    val list = Source.fromURL("http://" + apiAddress + "/tweets/api/tweet/file").mkString.split("\n")
+    val list = Source.fromURL("http://" + apiAddress + "/tweets/api/tweet/file/download").mkString.split("\n")
     
     val rdd = sc.parallelize(list)
     

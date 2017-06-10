@@ -37,6 +37,15 @@ public class TweetResource {
 		return new Response(true);
 	}
 	
+	@POST
+	@Path("/search")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response search() throws Exception {
+		service.search();
+		
+		return new Response(true);
+	}
+	
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -53,16 +62,16 @@ public class TweetResource {
 	}
 	
 	@GET
+	@Path("/file/download")
+	@Produces(MediaType.TEXT_PLAIN)
+	public File getFile() throws IOException {
+		return service.getFile();
+	}
+	
+	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Tweet get(@PathParam("id") String id) {
 		return service.get(id);
-	}
-	
-	@GET
-	@Path("/file")
-	@Produces(MediaType.TEXT_PLAIN)
-	public File getFile() throws IOException {
-		return service.getFile();
 	}
 }

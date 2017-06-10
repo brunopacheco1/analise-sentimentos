@@ -1,6 +1,7 @@
 package com.dev.bruno.sentimentanalysis.tweets.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Tweet implements Serializable {
 
@@ -9,6 +10,8 @@ public class Tweet implements Serializable {
 	private String id;
 	
 	private String text;
+	
+	private Date date;
 	
 	private Long humanSentiment;
 	
@@ -44,5 +47,13 @@ public class Tweet implements Serializable {
 
 	public void setMachineSentiment(Long machineSentiment) {
 		this.machineSentiment = machineSentiment;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
 	}
 }

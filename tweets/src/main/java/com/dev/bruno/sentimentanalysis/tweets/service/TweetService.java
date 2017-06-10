@@ -132,13 +132,15 @@ public class TweetService {
 		
 		Map<String, String> credentials = JacksonConfig.getObjectMapper().readValue(json, HashMap.class);
 		
-		twitter.setOAuthConsumer(credentials.get("apiKey"), credentials.get("apiSecret"));
-		twitter.setOAuthAccessToken(new AccessToken(credentials.get("accessToken"), credentials.get("accessTokenSecret")));
-        
+		try {
+			twitter.setOAuthConsumer(credentials.get("apiKey"), credentials.get("apiSecret"));
+			twitter.setOAuthAccessToken(new AccessToken(credentials.get("accessToken"), credentials.get("accessTokenSecret")));
+		} catch (Exception e) {}
+		
 		for(String filter : filters.split(";")) {
 			Query query = new Query(filter);
 			query.setLang("pt");
-			query.setSince("2010-01-01");
+			query.setSince("2006-01-01");
 		    QueryResult result = twitter.search(query);
 		    while(query != null) {
 		    	for(Status status : result.getTweets()) {
@@ -146,14 +148,8 @@ public class TweetService {
 			    		continue;
 			    	}
 			    	
-			    	Tweet tweet = new Tweet();
-					
-					tweet.setId(hash(String.valueOf(status.getId())));
-					tweet.setText(status.getText());
-					tweet.setDate(status.getCreatedAt());
-					
 					try {
-						insert(tweet);
+						create(status.getId(), status.getText(), status.getCreatedAt());
 					} catch (Exception e) {}
 		    	}
 		    	

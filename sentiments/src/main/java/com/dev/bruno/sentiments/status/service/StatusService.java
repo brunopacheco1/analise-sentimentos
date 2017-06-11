@@ -32,37 +32,37 @@ public class StatusService {
 			throw new AppException("id, text, date e source são campos obrigatórios.");
 		}
 		
-		Status tweet = new Status();
+		Status status = new Status();
 		
-		tweet.setId(hash(id + "_" + source));
-		tweet.setText(text);
-		tweet.setDate(date);
+		status.setId(hash(id + "_" + source));
+		status.setText(text);
+		status.setDate(date);
 		
-		topic.sendToInsert(tweet);
+		topic.sendToInsert(status);
 	}
 	
-	public void insert(Status tweet) {
-		if (tweet == null) {
-			throw new AppException("Tweet não informado.");
+	public void insert(Status status) {
+		if (status == null) {
+			throw new AppException("Status não informado.");
 		}
 		
-		if (tweet.getId() == null || tweet.getText() == null || tweet.getDate() == null || tweet.getSource() == null) {
+		if (status.getId() == null || status.getText() == null || status.getDate() == null || status.getSource() == null) {
 			throw new AppException("id, text, date e source são campos obrigatórios.");
 		}
 		
-		dao.insert(tweet);
+		dao.insert(status);
 	}
 
-	public void update(Status tweet) {
-		if (tweet == null) {
-			throw new AppException("Tweet não informado.");
+	public void update(Status status) {
+		if (status == null) {
+			throw new AppException("Status não informado.");
 		}
 
-		if (tweet.getId() == null) {
+		if (status.getId() == null) {
 			throw new AppException("id é campo obrigatório.");
 		}
 		
-		dao.update(tweet);
+		dao.update(status);
 	}
 	
 	public void processNullMachineSentiment() {
@@ -76,11 +76,11 @@ public class StatusService {
 	}
 
 	public File getFile() throws IOException {
-		List<Status> tweets = dao.listNotNullHumanSentiment();
+		List<Status> statusResult = dao.listNotNullHumanSentiment();
 		
-		Path path = Files.createTempFile("tweets", ".csv");
+		Path path = Files.createTempFile("status", ".csv");
 		
-		List<String> lines = tweets.stream().map(tweet -> tweet.getHumanSentiment() + ";" + tweet.getText().replaceAll("\"", "").replaceAll(";", "").replaceAll("\n", " ").replaceAll("\r", " ").replaceAll("\\s+", " ")).collect(Collectors.toList());
+		List<String> lines = statusResult.stream().map(status -> status.getHumanSentiment() + ";" + status.getText().replaceAll("\"", "").replaceAll(";", "").replaceAll("\n", " ").replaceAll("\r", " ").replaceAll("\\s+", " ")).collect(Collectors.toList());
 		
 		Files.write(path, lines);
 		

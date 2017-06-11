@@ -24,7 +24,6 @@ import com.google.cloud.datastore.KeyFactory;
 import com.google.cloud.datastore.Query;
 import com.google.cloud.datastore.QueryResults;
 import com.google.cloud.datastore.StructuredQuery.CompositeFilter;
-import com.google.cloud.datastore.StructuredQuery.OrderBy;
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
 import com.google.cloud.datastore.Transaction;
 
@@ -136,9 +135,7 @@ public class StatusDAO {
 	}
 
 	public List<Status> listNullHumanSentiment(Integer limit) {
-		Query<Entity> query = Query.newEntityQueryBuilder().setKind("status")
-				.setFilter(com.google.cloud.datastore.StructuredQuery.PropertyFilter.isNull("humanSentiment"))
-				.setOrderBy(OrderBy.asc("id")).setLimit(limit).build();
+		Query<Entity> query = Query.newEntityQueryBuilder().setKind("status").setFilter(com.google.cloud.datastore.StructuredQuery.PropertyFilter.isNull("humanSentiment")).setLimit(limit).build();
 
 		QueryResults<Entity> result = datastore.run(query);
 

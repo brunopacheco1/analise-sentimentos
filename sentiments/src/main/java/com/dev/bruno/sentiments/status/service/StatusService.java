@@ -37,6 +37,7 @@ public class StatusService {
 		status.setId(hash(id + "_" + source));
 		status.setText(text);
 		status.setDate(date);
+		status.setSource(source);
 		
 		topic.sendToInsert(status);
 	}

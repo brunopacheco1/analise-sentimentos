@@ -25,6 +25,7 @@ public class StatusService {
 	@Inject
 	private StatusDAO dao;
 	
+	@Inject
 	private StatusStreamProducer topic;
 	
 	public void insert(Long id, String text, Date date, String source) {

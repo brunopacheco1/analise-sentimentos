@@ -1,4 +1,4 @@
-package com.dev.bruno.sentimentanalysis.tweets.stream;
+package com.dev.bruno.sentiments.status.stream;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,17 +16,19 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
-import com.dev.bruno.sentimentanalysis.tweets.helper.JacksonConfig;
-import com.dev.bruno.sentimentanalysis.tweets.model.Tweet;
+import com.dev.bruno.sentiments.status.helper.JacksonConfig;
+import com.dev.bruno.sentiments.status.model.Status;
 
 @Singleton
 @Startup
-public class TweetTopic {
+public class StatusTopic {
 
 	@Resource(name = "credentials.folder")
 	private String credentialsFolder;
 	
-	public static final String INSERT_TOPIC = "tweets-insert";
+	public static final String INSERT_TOPIC = "status-insert";
+	
+	public static final String UPDATE_TOPIC = "status-update";
 	
 	private Producer<String, String> producer;
 	
@@ -48,10 +50,18 @@ public class TweetTopic {
 		producer.close();
 	}
 	
-	public void send(Tweet tweet) {
+	public void sendToInsert(Status status) {
+		send(status, INSERT_TOPIC);
+	}
+	
+	public void sendToUpdate(Status status) {
+		send(status, UPDATE_TOPIC);
+	}
+	
+	private void send(Status status, String topic) {
 		try {
-			String json = JacksonConfig.getObjectMapper().writeValueAsString(tweet);
-			producer.send(new ProducerRecord<String, String>(INSERT_TOPIC, json));
+			String json = JacksonConfig.getObjectMapper().writeValueAsString(status);
+			producer.send(new ProducerRecord<String, String>(topic, json));
 		} catch (IOException e) {
 			logger.log(Level.SEVERE, e.getMessage(), e);
 		}

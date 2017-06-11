@@ -1,9 +1,9 @@
-package com.dev.bruno.sentimentanalysis.tweets.model;
+package com.dev.bruno.sentiments.status.model;
 
 import java.io.Serializable;
 import java.util.Date;
 
-public class Tweet implements Serializable {
+public class Status implements Serializable {
 
 	private static final long serialVersionUID = -8238349604957197173L;
 
@@ -16,6 +16,8 @@ public class Tweet implements Serializable {
 	private Long humanSentiment;
 	
 	private Long machineSentiment;
+	
+	private String source;
 	
 	public String getId() {
 		return id;
@@ -55,5 +57,13 @@ public class Tweet implements Serializable {
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
 	}
 }

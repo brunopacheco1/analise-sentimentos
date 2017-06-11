@@ -1,4 +1,4 @@
-package com.dev.bruno.sentimentanalysis.tweets.dao;
+package com.dev.bruno.sentiments.status.dao;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,8 +12,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 
-import com.dev.bruno.sentimentanalysis.tweets.exception.AppException;
-import com.dev.bruno.sentimentanalysis.tweets.model.Tweet;
+import com.dev.bruno.sentiments.status.exception.AppException;
+import com.dev.bruno.sentiments.status.model.Status;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.datastore.Datastore;
 import com.google.cloud.datastore.DatastoreOptions;
@@ -29,7 +29,7 @@ import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
 import com.google.cloud.datastore.Transaction;
 
 @Stateless
-public class TweetDAO {
+public class StatusDAO {
 
 	private Datastore datastore;
 	
@@ -43,34 +43,30 @@ public class TweetDAO {
 	@PostConstruct
 	private void init() {
 		try {
-			datastore = DatastoreOptions.newBuilder().setProjectId("sentimentalizer-169016")
-					.setCredentials(ServiceAccountCredentials
-							.fromStream(new FileInputStream(credentialsFolder + "/sentimentalizer.json")))
-					.build().getService();
+			datastore = DatastoreOptions.newBuilder().setProjectId("sentimentalizer-169016").setCredentials(ServiceAccountCredentials.fromStream(new FileInputStream(credentialsFolder + "/sentimentalizer.json"))).build().getService();
 
-			keyFactory = datastore.newKeyFactory().setKind("tweet");
+			keyFactory = datastore.newKeyFactory().setKind("status");
 		} catch (IOException e) {
 			logger.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 	
-	public void insert(Tweet tweet) {
+	public void insert(Status status) {
 		Transaction transaction = datastore.newTransaction();
 		try {
 
-			Key key = keyFactory.newKey(tweet.getId());
+			Key key = keyFactory.newKey(status.getId());
 
-			FullEntity.Builder<Key> builder = FullEntity.newBuilder(key).set("id", tweet.getId()).set("text",
-					tweet.getText()).set("date", tweet.getDate().getTime());
+			FullEntity.Builder<Key> builder = FullEntity.newBuilder(key).set("id", status.getId()).set("text", status.getText()).set("date", status.getDate().getTime()).set("source", status.getSource());
 
-			if (tweet.getHumanSentiment() != null) {
-				builder.set("humanSentiment", tweet.getHumanSentiment());
+			if (status.getHumanSentiment() != null) {
+				builder.set("humanSentiment", status.getHumanSentiment());
 			} else {
 				builder.setNull("humanSentiment");
 			}
 
-			if (tweet.getMachineSentiment() != null) {
-				builder.set("machineSentiment", tweet.getMachineSentiment());
+			if (status.getMachineSentiment() != null) {
+				builder.set("machineSentiment", status.getMachineSentiment());
 			} else {
 				builder.setNull("machineSentiment");
 			}
@@ -86,18 +82,18 @@ public class TweetDAO {
 			if (transaction.isActive()) {
 				transaction.rollback();
 				
-				throw new AppException("Falha na inserção do tweet.");
+				throw new AppException("Falha na inserção do status.");
 			}
 		}
 	}
 
-	public void update(Tweet tweet) {
-		Key key = keyFactory.newKey(tweet.getId());
+	public void update(Status status) {
+		Key key = keyFactory.newKey(status.getId());
 
 		Entity entity = datastore.get(key);
 		
 		if(entity == null) {
-			throw new AppException("Tweet não encontrado.");
+			throw new AppException("Status não encontrado.");
 		}
 
 		Transaction transaction = datastore.newTransaction();
@@ -105,16 +101,12 @@ public class TweetDAO {
 		try {
 			Entity.Builder builder = Entity.newBuilder(entity);
 
-			if (tweet.getHumanSentiment() != null) {
-				builder.set("humanSentiment", tweet.getHumanSentiment());
-			} else {
-				builder.setNull("humanSentiment");
+			if (status.getHumanSentiment() != null) {
+				builder.set("humanSentiment", status.getHumanSentiment());
 			}
 
-			if (tweet.getMachineSentiment() != null) {
-				builder.set("machineSentiment", tweet.getMachineSentiment());
-			} else {
-				builder.setNull("machineSentiment");
+			if (status.getMachineSentiment() != null) {
+				builder.set("machineSentiment", status.getMachineSentiment());
 			}
 			
 			entity = builder.build();
@@ -128,90 +120,91 @@ public class TweetDAO {
 			if (transaction.isActive()) {
 				transaction.rollback();
 				
-				throw new AppException("Falha na atualização do tweet.");
+				throw new AppException("Falha na atualização do status.");
 			}
 		}
 	}
 
-	public Tweet get(String id) {
+	public Status get(String id) {
 		Key key = keyFactory.newKey(id);
 
 		Entity entity = datastore.get(key);
 
-		Tweet tweet = buildTweet(entity);
+		Status status = buildStatus(entity);
 
-		return tweet;
+		return status;
 	}
 
-	public List<Tweet> listNullHumanSentiment(Integer limit) {
-		Query<Entity> query = Query.newEntityQueryBuilder().setKind("tweet")
+	public List<Status> listNullHumanSentiment(Integer limit) {
+		Query<Entity> query = Query.newEntityQueryBuilder().setKind("status")
 				.setFilter(com.google.cloud.datastore.StructuredQuery.PropertyFilter.isNull("humanSentiment"))
 				.setOrderBy(OrderBy.asc("id")).setLimit(limit).build();
 
 		QueryResults<Entity> result = datastore.run(query);
 
-		List<Tweet> tweets = new ArrayList<>();
+		List<Status> statusResult = new ArrayList<>();
 		while (result.hasNext()) {
 			Entity entity = result.next();
 
-			Tweet tweet = buildTweet(entity);
+			Status status = buildStatus(entity);
 
-			tweets.add(tweet);
+			statusResult.add(status);
 		}
 
-		return tweets;
+		return statusResult;
 	}
 	
-	public List<Tweet> listNotNullHumanSentiment() {
-		Query<Entity> query = Query.newEntityQueryBuilder().setKind("tweet").setFilter(CompositeFilter.and(PropertyFilter.ge("humanSentiment", 0), PropertyFilter.le("humanSentiment", 4))).build();
+	public List<Status> listNotNullHumanSentiment() {
+		Query<Entity> query = Query.newEntityQueryBuilder().setKind("status").setFilter(CompositeFilter.and(PropertyFilter.ge("humanSentiment", 0), PropertyFilter.le("humanSentiment", 4))).build();
 
 		QueryResults<Entity> result = datastore.run(query);
 
-		List<Tweet> tweets = new ArrayList<>();
+		List<Status> statusResult = new ArrayList<>();
 		while (result.hasNext()) {
 			Entity entity = result.next();
 
-			Tweet tweet = buildTweet(entity);
+			Status status = buildStatus(entity);
 
-			tweets.add(tweet);
+			statusResult.add(status);
 		}
 
-		return tweets;
+		return statusResult;
 	}
 	
-	public List<Tweet> listNullMachineSentiment(Integer limit) {
-		Query<Entity> query = Query.newEntityQueryBuilder().setKind("tweet")
+	public List<Status> listNullMachineSentiment(Integer limit) {
+		Query<Entity> query = Query.newEntityQueryBuilder().setKind("status")
 				.setFilter(com.google.cloud.datastore.StructuredQuery.PropertyFilter.isNull("machineSentiment")).setLimit(limit).build();
 
 		QueryResults<Entity> result = datastore.run(query);
 
-		List<Tweet> tweets = new ArrayList<>();
+		List<Status> statusResult = new ArrayList<>();
 		while (result.hasNext()) {
 			Entity entity = result.next();
 
-			Tweet tweet = buildTweet(entity);
+			Status status = buildStatus(entity);
 
-			tweets.add(tweet);
+			statusResult.add(status);
 		}
 
-		return tweets;
+		return statusResult;
 	}
 
-	private Tweet buildTweet(Entity entity) {
-		Tweet tweet = new Tweet();
+	private Status buildStatus(Entity entity) {
+		Status status = new Status();
 
-		tweet.setId(entity.getString("id"));
-		tweet.setText(entity.getString("text"));
-		tweet.setDate(new Date(entity.getLong("date")));
+		status.setId(entity.getString("id"));
+		status.setText(entity.getString("text"));
+		status.setDate(new Date(entity.getLong("date")));
+		status.setSource(entity.getString("source"));
 
 		if (!entity.isNull("humanSentiment")) {
-			tweet.setHumanSentiment(entity.getLong("humanSentiment"));
+			status.setHumanSentiment(entity.getLong("humanSentiment"));
 		}
 
 		if (!entity.isNull("machineSentiment")) {
-			tweet.setMachineSentiment(entity.getLong("machineSentiment"));
+			status.setMachineSentiment(entity.getLong("machineSentiment"));
 		}
 		
-		return tweet;
+		return status;
 	}
 }

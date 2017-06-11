@@ -1,4 +1,4 @@
-package com.dev.bruno.sentimentanalysis.tweets.helper;
+package com.dev.bruno.sentiments.status.helper;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;

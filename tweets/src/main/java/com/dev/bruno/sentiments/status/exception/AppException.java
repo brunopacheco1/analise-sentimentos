@@ -1,4 +1,4 @@
-package com.dev.bruno.sentimentanalysis.tweets.exception;
+package com.dev.bruno.sentiments.status.exception;
 
 public class AppException extends RuntimeException {
     

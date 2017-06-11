@@ -1,6 +1,6 @@
-package com.dev.bruno.sentimentanalysis.tweets.stream;
+package com.dev.bruno.sentiments.twitter;
 
-import com.dev.bruno.sentimentanalysis.tweets.helper.ServiceLocator;
+import com.dev.bruno.sentiments.status.helper.ServiceLocator;
 
 import twitter4j.StallWarning;
 import twitter4j.Status;

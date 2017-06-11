@@ -1,4 +1,4 @@
-package com.dev.bruno.sentimentanalysis.tweets.stream;
+package com.dev.bruno.sentiments.twitter;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -14,8 +14,8 @@ import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
 
-import com.dev.bruno.sentimentanalysis.tweets.helper.JacksonConfig;
-import com.dev.bruno.sentimentanalysis.tweets.service.TweetService;
+import com.dev.bruno.sentiments.status.helper.JacksonConfig;
+import com.dev.bruno.sentiments.status.service.StatusService;
 
 import twitter4j.FilterQuery;
 import twitter4j.Status;
@@ -30,7 +30,7 @@ public class TwitterStream {
 	private twitter4j.TwitterStream twitterStream;
 	
 	@Inject
-	private TweetService service;
+	private StatusService service;
 
 	@Resource(name="credentials.folder")
 	private String credentialsFolder;
@@ -77,6 +77,6 @@ public class TwitterStream {
 			return;
 		}
 		
-		service.create(status.getId(), status.getText(), status.getCreatedAt());
+		service.insert(status.getId(), status.getText(), status.getCreatedAt(), "TWITTER");
 	}
 }

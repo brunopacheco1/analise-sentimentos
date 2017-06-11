@@ -1,4 +1,4 @@
-package com.dev.bruno.sentimentanalysis.tweets.model;
+package com.dev.bruno.sentiments.status.model;
 
 import java.io.Serializable;
 

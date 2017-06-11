@@ -1,4 +1,4 @@
-package com.dev.bruno.sentimentanalysis.tweets.exception;
+package com.dev.bruno.sentiments.status.exception;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -8,7 +8,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.dev.bruno.sentimentanalysis.tweets.model.Response;
+import com.dev.bruno.sentiments.status.model.Response;
 
 @Provider
 public class ThrowableMapper implements ExceptionMapper<Throwable> {

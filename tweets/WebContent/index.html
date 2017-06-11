@@ -21,20 +21,12 @@
 	<script src="js/scripts.js"></script>
 
 <script type="text/javascript">
-	var tweets = new Map();
-
 	function updateSentiment(id, sentiment) {
-		var tweet = tweets.get(id);
-		tweet.humanSentiment = sentiment;
-
 		$.ajax({
-    		url: "./api/tweet",
+    		url: "./api/status/" + id + "/humanSentiment/" + sentiment,
 			type: "PUT",
-	        contentType: "application/json; charset=utf-8",
-			dataType: "json",
-			data : JSON.stringify (tweet),
     		success: function (data) {
-				$( "#tweet-" + tweet.id).remove();
+				$( "#status-" + id).remove();
             }
     	});
 	}
@@ -43,13 +35,11 @@
     	$.ajax({
 		type: "GET",
     		dataType: "json",
-    		url: "./api/tweet",
+    		url: "./api/status/notSentimentalized",
     		success: function (data) {
-			$("#tweets-container").html("");
+			$("#status-container").html("");
 			$(data).each(function(index, child) {
-				tweets.set(child.id, child);
-				
-				$("#tweets-container").append('<div id="tweet-' + child.id + '" class="panel-body"><div class="col-md-8 col-sm-12 col-xs-12"><p>' + child.text + '</p></div><div class="col-md-4 col-sm-12 col-xs-12 alinhar_botoes"><div class="btn-group btn-group-sm"><button class="btn btn-danger" type="button" onclick="updateSentiment(\'' + child.id + '\',0)"><em class="glyphicon glyphicon-minus-sign"></em> Negativo</button><button class="btn btn-warning" type="button" onclick="updateSentiment(\'' + child.id + '\',2)"><em class="glyphicon glyphicon-question-sign"></em> Neutro</button><button class="btn btn-success" type="button" onclick="updateSentiment(\'' + child.id + '\',4)"><em class="glyphicon glyphicon-plus-sign"></em> Positivo</button></div></div></div>');
+				$("#status-container").append('<div id="status-' + child.id + '" class="panel-body"><div class="col-md-8 col-sm-12 col-xs-12"><p>' + child.text + '</p></div><div class="col-md-4 col-sm-12 col-xs-12 alinhar_botoes"><div class="btn-group btn-group-sm"><button class="btn btn-danger" type="button" onclick="updateSentiment(\'' + child.id + '\',0)"><em class="glyphicon glyphicon-minus-sign"></em> Negativo</button><button class="btn btn-warning" type="button" onclick="updateSentiment(\'' + child.id + '\',2)"><em class="glyphicon glyphicon-question-sign"></em> Neutro</button><button class="btn btn-success" type="button" onclick="updateSentiment(\'' + child.id + '\',4)"><em class="glyphicon glyphicon-plus-sign"></em> Positivo</button></div></div></div>');
 			});
             }
     	});
@@ -68,13 +58,13 @@
 					<div class="col-md-10 col-sm-8 col-xs-12">
 						<h2>Análise de Sentimentos: Uma Visão Sobre o Ecad</h2>
 						<p>Este projeto tem por finalidade implementar técnicas de aprendizado de máquina supervisionado, para análise de sentimento em mídias sociais, sobre o Escritório Central de Arrecadação e Distribuição (Ecad).</p>
-						<p>Esta ferramenta foi desenvolvida para apoio à coleta de informações, onde um banco de dados de tweets sentimentalizados será desenvolvido. Este dataset será utilizado pelo algoritmo para treino e comparação com posteriores resultados de sentimentalização automatizada.
+						<p>Esta ferramenta foi desenvolvida para apoio à coleta de informações, onde um banco de dados de status (tweets, facebook posts, etc) sentimentalizados será desenvolvido. Este dataset será utilizado pelo algoritmo para treino e comparação com posteriores resultados de sentimentalização automatizada.
 					</div>
 					<div style="clear: both;"></div>
 					
 				</div>
 				
-				<div id="tweets-container" class="col-md-12 panel panel-default">
+				<div id="status-container" class="col-md-12 panel panel-default">
 				</div>
 			</div>
 		</div>

@@ -1,5 +1,5 @@
 indexes:
-- kind: tweet
+- kind: status
   properties:
   - name: sentiment
   - name: id

@@ -20,9 +20,9 @@
 				</excludes>
 			</resource>
 		</resources>
-		<finalName>tweets</finalName>
+		<finalName>sentiments</finalName>
 		<filters>
-			<filter>${basedir}/WebContent/WEB-INF/tweets.properties</filter>
+			<filter>${basedir}/WebContent/WEB-INF/sentiments.properties</filter>
 		</filters>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<plugins>
@@ -50,23 +50,6 @@
 						</resource>
 					</webResources>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.wildfly.plugins</groupId>
-				<artifactId>wildfly-maven-plugin</artifactId>
-				<version>1.1.0.Alpha11</version>
-				<configuration>
-					<hostname>localhost</hostname>
-					<port>9990</port>
-					<username>tweets</username>
-					<password>tweets</password>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.19.1</version>
 			</plugin>
 		</plugins>
 	</build>

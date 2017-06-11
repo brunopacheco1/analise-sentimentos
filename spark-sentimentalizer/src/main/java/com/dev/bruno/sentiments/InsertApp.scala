@@ -1,33 +1,16 @@
 package com.dev.bruno.sentiments
 
-import java.net.HttpURLConnection
-import java.net.URL
 import java.util.Properties
 
 import scala.collection.JavaConverters.propertiesAsScalaMapConverter
-import scala.io.Source
 
-import org.apache.lucene.analysis.br.RSLPStemmer
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
-import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.streaming.Seconds
 import org.apache.spark.streaming.StreamingContext
 import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
 import org.apache.spark.streaming.kafka010.KafkaUtils
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
-
-import spray.json.DefaultJsonProtocol._
-import spray.json.JsNull
-import spray.json.JsObject
-import spray.json.JsString
-import spray.json.pimpAny
-import spray.json.pimpString
-import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
-import org.apache.spark.mllib.feature.HashingTF
-import org.apache.spark.mllib.linalg.Vector
-import spray.json.JsNumber
 
 object InsertApp {
   

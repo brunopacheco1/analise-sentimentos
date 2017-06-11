@@ -1,10 +1,12 @@
 package com.dev.bruno.sentiments
 
-import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
-import org.apache.spark.SparkContext
 import scala.io.Source
+
+import org.apache.spark.SparkContext
 import org.apache.spark.broadcast.Broadcast
+import org.apache.spark.mllib.classification.NaiveBayes
+import org.apache.spark.mllib.classification.NaiveBayesModel
+import org.apache.spark.mllib.regression.LabeledPoint
 
 object NaiveBayesLoader {
 

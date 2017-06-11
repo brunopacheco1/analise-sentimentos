@@ -1,16 +1,21 @@
 package com.dev.bruno.sentiments
 
+import java.net.HttpURLConnection
+import java.net.URL
+
+import org.apache.lucene.analysis.br.RSLPStemmer
+import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.mllib.classification.NaiveBayesModel
 import org.apache.spark.mllib.feature.HashingTF
 import org.apache.spark.mllib.linalg.Vector
-import org.apache.lucene.analysis.br.RSLPStemmer
-import org.apache.spark.broadcast.Broadcast
 
-import spray.json.DefaultJsonProtocol._
-import spray.json._
-
-import java.net.HttpURLConnection
-import java.net.URL
+import spray.json.DefaultJsonProtocol.StringJsonFormat
+import spray.json.DefaultJsonProtocol.jsonFormat4
+import spray.json.JsNull
+import spray.json.JsNumber
+import spray.json.JsObject
+import spray.json.JsString
+import spray.json.pimpString
 
 object StatusProcessor {
 

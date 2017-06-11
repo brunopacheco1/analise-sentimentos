@@ -21,7 +21,7 @@ import com.dev.bruno.sentiments.status.model.Status;
 
 @Singleton
 @Startup
-public class StatusTopic {
+public class StatusStreamProducer {
 
 	@Resource(name = "credentials.folder")
 	private String credentialsFolder;

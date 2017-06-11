@@ -17,7 +17,7 @@ import javax.inject.Inject;
 import com.dev.bruno.sentiments.status.dao.StatusDAO;
 import com.dev.bruno.sentiments.status.exception.AppException;
 import com.dev.bruno.sentiments.status.model.Status;
-import com.dev.bruno.sentiments.status.stream.StatusTopic;
+import com.dev.bruno.sentiments.status.stream.StatusStreamProducer;
 
 @Stateless
 public class StatusService {
@@ -25,7 +25,7 @@ public class StatusService {
 	@Inject
 	private StatusDAO dao;
 	
-	private StatusTopic topic;
+	private StatusStreamProducer topic;
 	
 	public void insert(Long id, String text, Date date, String source) {
 		if (id == null || text == null || date == null || source == null) {

@@ -1,4 +1,4 @@
-package com.dev.bruno.sentiments.status.resource;
+package com.dev.bruno.sentiments.twitter.resource;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -8,7 +8,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.dev.bruno.sentiments.status.model.Response;
-import com.dev.bruno.sentiments.twitter.TwitterService;
+import com.dev.bruno.sentiments.twitter.service.TwitterService;
 
 @Stateless
 @Path("/twitter")

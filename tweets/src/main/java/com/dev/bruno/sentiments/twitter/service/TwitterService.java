@@ -1,4 +1,4 @@
-package com.dev.bruno.sentiments.twitter;
+package com.dev.bruno.sentiments.twitter.service;
 
 import java.io.FileInputStream;
 import java.util.HashMap;

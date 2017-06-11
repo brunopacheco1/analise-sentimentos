@@ -1,4 +1,4 @@
-package com.dev.bruno.sentiments.twitter;
+package com.dev.bruno.sentiments.twitter.stream;
 
 import com.dev.bruno.sentiments.status.helper.ServiceLocator;
 

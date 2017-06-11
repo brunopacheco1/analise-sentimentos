@@ -1,3 +1,3 @@
 # Sentimentalizer
 
-Aplicação Spark para indexação e sentimentalização dos tweets captados.
+Aplicações Spark para indexação e sentimentalização dos status (tweets, facebook posts, etc) captados.

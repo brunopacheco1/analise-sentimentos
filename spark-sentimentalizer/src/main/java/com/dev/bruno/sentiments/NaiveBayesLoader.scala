@@ -20,7 +20,7 @@ object NaiveBayesLoader {
       (split(0).toInt, split(1))
     })
     
-    val labeledRDD = rows.map(row => LabeledPoint(row._1, StatusProcessor.transformFeatures(row._2, stopWords)))
+    val labeledRDD = rows.map(row => LabeledPoint(row._1, StatusAnalyzer.transformFeatures(row._2, stopWords)))
     
     labeledRDD.cache()
 

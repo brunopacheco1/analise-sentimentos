@@ -12,7 +12,7 @@ import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
 import org.apache.spark.streaming.kafka010.KafkaUtils
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 
-object UpdateApp {
+object SentimentalizerApp {
   
   def main(args: Array[String]): Unit = {
  
@@ -22,7 +22,7 @@ object UpdateApp {
       apiAddress = args(0).split("=")(1)
     }
     
-    val sparkConf = new SparkConf().setAppName("UpdateApp").setMaster("local[*]")
+    val sparkConf = new SparkConf().setAppName("SentimentalizerApp").setMaster("local[*]")
 
     val sc = new SparkContext(sparkConf)
 
@@ -38,7 +38,7 @@ object UpdateApp {
     val props = new Properties()
     props.load(getClass().getResourceAsStream("/kafka.properties"));
 
-    val topics = Array("status-update")
+    val topics = Array("status-process")
     val stream = KafkaUtils.createDirectStream[String, String](
       ssc,
       PreferConsistent,
@@ -48,7 +48,9 @@ object UpdateApp {
 
     //PROCESSANDO STATUS DO KAFKA
     kafkaRDDs.foreachRDD(rdd => {
-       rdd.foreach(el => StatusProcessor.update(apiAddress, stopWords, el._2, naiveBayesModel))
+      rdd.foreach(el => {
+        StatusAnalyzer.process(apiAddress, stopWords, el._2, naiveBayesModel)
+      })
     })
 
     ssc.start()

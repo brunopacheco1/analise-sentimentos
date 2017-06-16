@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	version="3.0">
 	<display-name>sentiments</display-name>
-	
+
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
@@ -14,16 +14,22 @@
 		<env-entry-type>java.lang.String</env-entry-type>
 		<env-entry-value>${app.context}</env-entry-value>
 	</env-entry>
-	
+
 	<env-entry>
 		<env-entry-name>credentials.folder</env-entry-name>
 		<env-entry-type>java.lang.String</env-entry-type>
 		<env-entry-value>${credentials.folder}</env-entry-value>
 	</env-entry>
-	
-		<env-entry>
-		<env-entry-name>search.filters</env-entry-name>
+
+	<env-entry>
+		<env-entry-name>twitter.filters</env-entry-name>
 		<env-entry-type>java.lang.String</env-entry-type>
-		<env-entry-value>${search.filters}</env-entry-value>
+		<env-entry-value>${twitter.filters}</env-entry-value>
+	</env-entry>
+	
+	<env-entry>
+		<env-entry-name>facebook.pages</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>${facebook.pages}</env-entry-value>
 	</env-entry>
 </web-app>

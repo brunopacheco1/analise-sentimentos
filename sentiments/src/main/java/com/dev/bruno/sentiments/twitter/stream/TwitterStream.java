@@ -35,7 +35,7 @@ public class TwitterStream {
 	@Resource(name="credentials.folder")
 	private String credentialsFolder;
 	
-	@Resource(name="search.filters")
+	@Resource(name="twitter.filters")
 	private String filters;
 	
 	@SuppressWarnings("unchecked")

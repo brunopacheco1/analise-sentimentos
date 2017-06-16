@@ -1,24 +1,34 @@
 package com.dev.bruno.sentiments.twitter.service;
 
-import java.io.FileInputStream;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import com.dev.bruno.sentiments.status.helper.JacksonConfig;
 import com.dev.bruno.sentiments.status.service.StatusService;
-
-import twitter4j.Query;
-import twitter4j.QueryResult;
-import twitter4j.Status;
-import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
-import twitter4j.auth.AccessToken;
+import com.dev.bruno.sentiments.twitter.model.Tweet;
 
 @Stateless
 public class TwitterService {
@@ -32,41 +42,127 @@ public class TwitterService {
 	@Resource(name="twitter.filters")
 	private String filters;
 
-	@SuppressWarnings("unchecked")
 	public void search() throws Exception {
-		Twitter twitter = TwitterFactory.getSingleton();
-		
-		String json = new String(IOUtils.toByteArray(new FileInputStream(credentialsFolder + "/twitter.json")));
-		
-		Map<String, String> credentials = JacksonConfig.getObjectMapper().readValue(json, HashMap.class);
-		
-		try {
-			twitter.setOAuthConsumer(credentials.get("apiKey"), credentials.get("apiSecret"));
-			twitter.setOAuthAccessToken(new AccessToken(credentials.get("accessToken"), credentials.get("accessTokenSecret")));
-		} catch (Exception e) {}
+		Consumer<Tweet> insertIntoTopic = (Tweet tweet) -> service.insert(tweet.getId(), tweet.getText(), tweet.getDate(), "TWITTER");
 		
 		for(String filter : filters.split(";")) {
-			Query query = new Query(filter);
-			query.setLang("pt");
-			query.setSince("2006-01-01");
-		    QueryResult result = twitter.search(query);
+		    TwitterCriteria criteria = TwitterCriteria.create().setQuerySearch(filter).setLang("pt");
 		    
-		    while(query != null) {
-		    	for(Status status : result.getTweets()) {
-			    	if(status.isRetweet()) {
-			    		continue;
-			    	}
-			    	
-					try {
-						service.insert(status.getId(), status.getText(), status.getCreatedAt(), "TWITTER");
-					} catch (Exception e) {}
-		    	}
-		    	
-		    	query = result.nextQuery();
-		    	if(query != null) {
-		    		result = twitter.search(query);
-		    	}
-		    }
+		    List<Tweet> tweets = getTweets(criteria, insertIntoTopic);
+		    
+		    System.out.println(filter + " - " + tweets.size());
 		}
+	}
+	
+	private static final HttpClient defaultHttpClient = HttpClientBuilder.create().build();
+	
+	static {
+		Logger.getLogger("org.apache.http").setLevel(Level.OFF);
+	}
+
+	/**
+	 * @param username A specific username (without @)
+	 * @param since Lower bound date (yyyy-mm-dd)
+	 * @param until Upper bound date (yyyy-mm-dd)
+	 * @param scrollCursor (Parameter used by Twitter to do pagination of results)
+	 * @return JSON response used by Twitter to build its results
+	 * @throws Exception
+	 */
+	private static String getURLResponse(String username, String since, String until, String querySearch, String lang, String scrollCursor) throws Exception {
+		String appendQuery = "";
+		if (username != null) {
+			appendQuery += "from:"+username;
+		}
+		if (since != null) {
+			appendQuery += " since:"+since;
+		}
+		if (until != null) {
+			appendQuery += " until:"+until;
+		}
+		if (lang != null) {
+			appendQuery += " lang:"+lang;
+		}
+		if (querySearch != null) {
+			appendQuery += " "+querySearch;
+		}
+		
+		String url = String.format("https://twitter.com/i/search/timeline?f=realtime&q=%s&src=typd&max_position=%s", URLEncoder.encode(appendQuery, "UTF-8"), scrollCursor);
+		
+		HttpGet httpGet = new HttpGet(url);
+		HttpEntity resp = defaultHttpClient.execute(httpGet).getEntity();
+		
+		return EntityUtils.toString(resp);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<Tweet> getTweets(TwitterCriteria criteria, Consumer<? super Tweet> action) {
+		List<Tweet> results = new ArrayList<Tweet>();
+		
+		try {
+			String refreshCursor = null;
+			outerLace: while (true) {
+				Map<String, Object> json = JacksonConfig.getObjectMapper().readValue(getURLResponse(criteria.getUsername(), criteria.getSince(), criteria.getUntil(), criteria.getQuerySearch(), criteria.getLang(), refreshCursor), HashMap.class);
+				refreshCursor = (String) json.get("min_position");
+				Document doc = Jsoup.parse((String) json.get("items_html"));
+				Elements tweets = doc.select("div.js-stream-tweet");
+				
+				if (tweets.size() == 0) {
+					break;
+				}
+			
+				for (Element tweet : tweets) {
+					String usernameTweet = tweet.select("span.username.js-action-profile-name b").text();
+					String txt = tweet.select("p.js-tweet-text").text().replaceAll("[^\\u0000-\\uFFFF]", "");
+					int retweets = Integer.valueOf(tweet.select("span.ProfileTweet-action--retweet span.ProfileTweet-actionCount").attr("data-tweet-stat-count").replaceAll(",", ""));
+					int favorites = Integer.valueOf(tweet.select("span.ProfileTweet-action--favorite span.ProfileTweet-actionCount").attr("data-tweet-stat-count").replaceAll(",", ""));
+					long dateMs = Long.valueOf(tweet.select("small.time span.js-short-timestamp").attr("data-time-ms"));
+					String id = tweet.attr("data-tweet-id");
+					String permalink = tweet.attr("data-permalink-path");
+					
+					String geo = "";
+					Elements geoElement = tweet.select("span.Tweet-geo");
+					if (geoElement.size() > 0) {
+						geo = geoElement.attr("title");
+					}
+
+					Date date = new Date(dateMs);
+					
+					Tweet t = new Tweet();
+					t.setId(id);
+					t.setPermalink("https://twitter.com"+permalink);
+					t.setUsername(usernameTweet);
+					t.setText(txt);
+					t.setDate(date);
+					t.setRetweets(retweets);
+					t.setFavorites(favorites);
+					t.setMentions(processTerms("(@\\w*)", txt));
+					t.setHashtags(processTerms("(#\\w*)", txt));
+					t.setGeo(geo);
+					
+					action.accept(t);
+					
+					results.add(t);
+					
+					if (criteria.getMaxTweets() > 0 && results.size() >= criteria.getMaxTweets()) {
+						break outerLace;
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return results;
+	}
+	
+	private static String processTerms(String patternS, String tweetText) {
+		StringBuilder sb = new StringBuilder();
+		Matcher matcher = Pattern.compile(patternS).matcher(tweetText);
+		while (matcher.find()) {
+			sb.append(matcher.group());
+			sb.append(" ");
+		}
+		
+		return sb.toString().trim();
 	}
 }

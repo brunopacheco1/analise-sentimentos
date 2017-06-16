@@ -29,7 +29,7 @@ public class TwitterService {
 	@Resource(name="credentials.folder")
 	private String credentialsFolder;
 	
-	@Resource(name="twitter.filters")
+	@Resource(name="search.filters")
 	private String filters;
 
 	@SuppressWarnings("unchecked")
@@ -50,6 +50,7 @@ public class TwitterService {
 			query.setLang("pt");
 			query.setSince("2006-01-01");
 		    QueryResult result = twitter.search(query);
+		    
 		    while(query != null) {
 		    	for(Status status : result.getTweets()) {
 			    	if(status.isRetweet()) {

@@ -26,10 +26,6 @@ public class StatusStreamProducer {
 	@Resource(name = "credentials.folder")
 	private String credentialsFolder;
 	
-	public static final String INSERT_TOPIC = "status-insert";
-	
-	public static final String UPDATE_TOPIC = "status-update";
-	
 	private Producer<String, String> producer;
 	
 	private Logger logger = Logger.getLogger(this.getClass().getName());
@@ -51,17 +47,19 @@ public class StatusStreamProducer {
 	}
 	
 	public void sendToInsert(Status status) {
-		send(status, INSERT_TOPIC);
+		status.setAction("insert");
+		send(status);
 	}
 	
 	public void sendToUpdate(Status status) {
-		send(status, UPDATE_TOPIC);
+		status.setAction("update");
+		send(status);
 	}
 	
-	private void send(Status status, String topic) {
+	private void send(Status status) {
 		try {
 			String json = JacksonConfig.getObjectMapper().writeValueAsString(status);
-			producer.send(new ProducerRecord<String, String>(topic, json));
+			producer.send(new ProducerRecord<String, String>("status-process", json));
 		} catch (IOException e) {
 			logger.log(Level.SEVERE, e.getMessage(), e);
 		}

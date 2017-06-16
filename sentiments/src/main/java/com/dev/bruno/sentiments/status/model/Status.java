@@ -19,6 +19,8 @@ public class Status implements Serializable {
 	
 	private String source;
 	
+	private String action;
+	
 	public String getId() {
 		return id;
 	}
@@ -65,5 +67,13 @@ public class Status implements Serializable {
 
 	public void setSource(String source) {
 		this.source = source;
+	}
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
 	}
 }

@@ -185,6 +185,23 @@ public class StatusDAO {
 
 		return statusResult;
 	}
+	
+	public List<Status> list() {
+		Query<Entity> query = Query.newEntityQueryBuilder().setKind("status").setLimit(10000).build();
+
+		QueryResults<Entity> result = datastore.run(query);
+
+		List<Status> statusResult = new ArrayList<>();
+		while (result.hasNext()) {
+			Entity entity = result.next();
+
+			Status status = buildStatus(entity);
+
+			statusResult.add(status);
+		}
+
+		return statusResult;
+	}
 
 	private Status buildStatus(Entity entity) {
 		Status status = new Status();

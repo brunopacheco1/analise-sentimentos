@@ -22,8 +22,8 @@
 	</env-entry>
 	
 		<env-entry>
-		<env-entry-name>twitter.filters</env-entry-name>
+		<env-entry-name>search.filters</env-entry-name>
 		<env-entry-type>java.lang.String</env-entry-type>
-		<env-entry-value>${twitter.filters}</env-entry-value>
+		<env-entry-value>${search.filters}</env-entry-value>
 	</env-entry>
 </web-app>

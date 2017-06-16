@@ -28,7 +28,7 @@ public class StatusService {
 	@Inject
 	private StatusStreamProducer topic;
 	
-	public void insert(Long id, String text, Date date, String source) {
+	public void insert(Object id, String text, Date date, String source) {
 		if (id == null || text == null || date == null || source == null) {
 			throw new AppException("id, text, date e source são campos obrigatórios.");
 		}
@@ -65,6 +65,12 @@ public class StatusService {
 		}
 		
 		dao.update(status);
+	}
+	
+	public void reprocessMachineSentiment() {
+		List<Status> statusResult = dao.list();
+		
+		statusResult.forEach(status -> topic.sendToUpdate(status));
 	}
 	
 	public void processNullMachineSentiment() {

@@ -46,6 +46,15 @@ public class StatusResource {
 		return new Response(true);
 	}
 	
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/reprocess")
+	public Response reprocess() {
+		service.reprocessMachineSentiment();
+		
+		return new Response(true);
+	}
+	
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{id}/machineSentiment/{sentiment}")

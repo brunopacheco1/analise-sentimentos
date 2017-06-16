@@ -2,7 +2,9 @@ package com.dev.bruno.sentiments.facebook.service;
 
 import java.io.FileInputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
@@ -19,6 +21,7 @@ import facebook4j.FacebookFactory;
 import facebook4j.PagableList;
 import facebook4j.Paging;
 import facebook4j.Post;
+import facebook4j.Reading;
 import facebook4j.auth.AccessToken;
 
 @Stateless
@@ -47,43 +50,40 @@ public class FacebookService {
 
 		facebook.setOAuthAccessToken(accessToken);
 
-		Map<String, Post> allPosts = new HashMap<>();
+		Set<String> allPosts = new HashSet<>();
 
 		for (String page : pages.split(";")) {
-			PagableList<Post> posts = facebook.getPosts(page);
+			PagableList<Post> posts = facebook.getFeed(page, new Reading().fields("id"));
 			Paging<Post> paging;
 			do {
 				for (Post post : posts) {
-					if (post.getMessage() == null || post.getCreatedTime() == null) {
-						continue;
-					}
-
-					allPosts.put(post.getId(), post);
+					allPosts.add(post.getId());
 				}
 
 				paging = posts.getPaging();
 			} while ((paging != null) && ((posts = facebook.fetchNext(paging)) != null));
 			
-			PagableList<Post> taggedPosts = facebook.getTagged(page);
+			PagableList<Post> taggedPosts = facebook.getTagged(page, new Reading().fields("id"));
 			paging = null;
 			do {
 				for (Post post : taggedPosts) {
-					if (post.getMessage() == null || post.getCreatedTime() == null) {
+					Post realPost = facebook.getPost(post.getId(), new Reading().fields("id", "message", "created_time"));
+					
+					if (realPost.getMessage() == null || realPost.getCreatedTime() == null) {
 						continue;
 					}
 
 					//INSERINDO POSTS ONDE O ECAD FOI TAGEADO
-					service.insert(post.getId(), post.getMessage(), post.getCreatedTime(), "FACEBOOK");
-
-					allPosts.put(post.getId(), post);
+					service.insert(realPost.getId(), realPost.getMessage(), realPost.getCreatedTime(), "FACEBOOK");
 				}
 
 				paging = taggedPosts.getPaging();
 			} while ((paging != null) && ((taggedPosts = facebook.fetchNext(paging)) != null));
 		}
 
-		for (Post post : allPosts.values()) {
-			PagableList<Comment> comments = post.getComments();
+		for (String postId : allPosts) {
+			PagableList<Comment> comments = facebook.getPostComments(postId, new Reading().fields("id", "message", "created_time"));
+			
 			Paging<Comment> paging;
 			do {
 				for (Comment comment : comments) {

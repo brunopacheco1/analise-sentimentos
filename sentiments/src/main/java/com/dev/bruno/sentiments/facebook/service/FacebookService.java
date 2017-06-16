@@ -54,7 +54,7 @@ public class FacebookService {
 			Paging<Post> paging;
 			do {
 				for (Post post : posts) {
-					if (post.getMessage() == null) {
+					if (post.getMessage() == null || post.getCreatedTime() == null) {
 						continue;
 					}
 
@@ -68,9 +68,12 @@ public class FacebookService {
 			paging = null;
 			do {
 				for (Post post : taggedPosts) {
-					if (post.getMessage() == null) {
+					if (post.getMessage() == null || post.getCreatedTime() == null) {
 						continue;
 					}
+
+					//INSERINDO POSTS ONDE O ECAD FOI TAGEADO
+					service.insert(post.getId(), post.getMessage(), post.getCreatedTime(), "FACEBOOK");
 
 					allPosts.put(post.getId(), post);
 				}
@@ -80,12 +83,15 @@ public class FacebookService {
 		}
 
 		for (Post post : allPosts.values()) {
-			service.insert(post.getId(), post.getMessage(), post.getCreatedTime(), "FACEBOOK");
-
 			PagableList<Comment> comments = post.getComments();
 			Paging<Comment> paging;
 			do {
 				for (Comment comment : comments) {
+					if (comment.getMessage() == null || comment.getCreatedTime() == null) {
+						continue;
+					}
+					
+					//INSERINDO COMENTARIOS DOS POSTS DO ECAD OU DOS POSTS QUE ESTE FOI TAGEADO
 					service.insert(comment.getId(), comment.getMessage(), comment.getCreatedTime(), "FACEBOOK");
 				}
 

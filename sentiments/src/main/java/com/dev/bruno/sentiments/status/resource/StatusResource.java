@@ -7,6 +7,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -65,6 +66,15 @@ public class StatusResource {
 		status.setMachineSentiment(sentiment);
 		
 		service.update(status);
+		
+		return new Response(true);
+	}
+	
+	@DELETE
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/{id}")
+	public Response delete(@PathParam("id") String id) {
+		service.delete(id);
 		
 		return new Response(true);
 	}

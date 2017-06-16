@@ -108,4 +108,8 @@ public class StatusService {
 		
 		return null;
 	}
+
+	public void delete(String id) {
+		dao.delete(id);
+	}
 }

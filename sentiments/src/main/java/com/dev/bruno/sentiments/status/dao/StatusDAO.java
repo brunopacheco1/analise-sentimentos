@@ -221,4 +221,24 @@ public class StatusDAO {
 		
 		return status;
 	}
+
+	public void delete(String id) {
+		Transaction transaction = datastore.newTransaction();
+		
+		try {
+			Key key = keyFactory.newKey(id);
+			
+			transaction.delete(key);
+			
+			transaction.commit();
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, e.getMessage(), e);
+		} finally {
+			if (transaction.isActive()) {
+				transaction.rollback();
+				
+				throw new AppException("Falha na inserção do status.");
+			}
+		}
+	}
 }

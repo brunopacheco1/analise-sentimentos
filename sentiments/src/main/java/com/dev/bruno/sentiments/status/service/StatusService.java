@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -83,12 +85,26 @@ public class StatusService {
 		return dao.listNullHumanSentiment(limit);
 	}
 
-	public File getFile() throws IOException {
+	public File getSentimentalizedFile() throws IOException {
 		List<Status> statusResult = dao.listNotNullHumanSentiment();
 		
 		Path path = Files.createTempFile("status", ".csv");
 		
 		List<String> lines = statusResult.stream().map(status -> status.getHumanSentiment() + ";" + status.getText().replaceAll("\"", "").replaceAll(";", "").replaceAll("\n", " ").replaceAll("\r", " ").replaceAll("\\s+", " ")).collect(Collectors.toList());
+		
+		Files.write(path, lines);
+		
+		return path.toFile();
+	}
+	
+	public File getNotSentimentalizedFile() throws IOException {
+		List<Status> statusResult = dao.list();
+		
+		Path path = Files.createTempFile("status", ".csv");
+		
+		DateFormat format = new SimpleDateFormat("dd'/'MM'/'yyyy' 'HH':'mm':'ss");
+		
+		List<String> lines = statusResult.stream().map(status -> status.getMachineSentiment() + ";" + status.getHumanSentiment() + ";" + format.format(status.getDate()) + ";" + status.getText().replaceAll("\"", "").replaceAll(";", "").replaceAll("\n", " ").replaceAll("\r", " ").replaceAll("\\s+", " ")).collect(Collectors.toList());
 		
 		Files.write(path, lines);
 		

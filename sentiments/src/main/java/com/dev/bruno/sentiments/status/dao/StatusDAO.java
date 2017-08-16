@@ -189,7 +189,7 @@ public class StatusDAO {
 	}
 	
 	public List<Status> list() {
-		Query<Entity> query = Query.newEntityQueryBuilder().setKind("status").setLimit(10000).build();
+		Query<Entity> query = Query.newEntityQueryBuilder().setKind("status").setLimit(15000).build();
 
 		QueryResults<Entity> result = datastore.run(query);
 

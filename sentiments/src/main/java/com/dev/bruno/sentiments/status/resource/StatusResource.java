@@ -103,7 +103,14 @@ public class StatusResource {
 	@GET
 	@Path("/sentimentalized/csv")
 	@Produces(MediaType.TEXT_PLAIN)
-	public File getFile() throws IOException {
-		return service.getFile();
+	public File getSentimentalizedFile() throws IOException {
+		return service.getSentimentalizedFile();
+	}
+	
+	@GET
+	@Path("/not-sentimentalized/csv")
+	@Produces(MediaType.TEXT_PLAIN)
+	public File getNotSentimentalizedFile() throws IOException {
+		return service.getNotSentimentalizedFile();
 	}
 }
